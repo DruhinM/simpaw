@@ -132,8 +132,8 @@ export default function ContactPage() {
                     <EnvelopeIcon className="h-7 w-6 text-gray-400" aria-hidden="true" />
                   </dt>
                   <dd>
-                    <a className="hover:text-gray-900" href="mailto:support@simpaw.com">
-                      support@simpaw.com
+                    <a className="hover:text-gray-900" href="mailto:druhin.mukherjee@gmail.com">
+                      druhin.mukherjee@gmail.com
                     </a>
                   </dd>
                 </div>

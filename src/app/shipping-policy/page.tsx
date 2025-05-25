@@ -83,7 +83,7 @@ export default function ShippingPolicyPage() {
             <p className="text-gray-600 mb-4">
               For questions about our digital services, contact us at:
               <br />
-              Email: support@simpaw.com
+              Email: admin@simpaw.in
               <br />
               Response Time: Within 24-48 hours
             </p>

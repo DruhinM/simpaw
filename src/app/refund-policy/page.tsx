@@ -67,7 +67,7 @@ export default function RefundPolicyPage() {
             <p className="text-gray-600 mb-4">
               For refund requests or questions, contact us at:
               <br />
-              Email: support@simpaw.com
+              Email: druhin.mukherjee@gmail.com
               <br />
               Phone: [Your Phone Number]
               <br />

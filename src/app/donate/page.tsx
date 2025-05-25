@@ -151,7 +151,7 @@ export default function DonatePage() {
                   ))}
                 </div>
                 <p className="mt-4 text-sm text-gray-600">
-                  After making your donation, please email us at support@simpaw.com with:
+                  After making your donation, please email us at druhin.mukherjee@gmail.com with:
                 </p>
                 <ul className="mt-2 text-sm text-gray-600 list-disc list-inside">
                   <li>Your name</li>

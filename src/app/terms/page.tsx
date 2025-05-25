@@ -69,7 +69,7 @@ export default function TermsPage() {
             <p className="text-gray-600 mb-4">
               For questions about these terms, contact us at:
               <br />
-              Email: support@simpaw.com
+              Email: admin@simpaw.in
               <br />
               Address: [Your Business Address]
             </p>

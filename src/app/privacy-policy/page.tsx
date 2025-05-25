@@ -67,7 +67,7 @@ export default function PrivacyPolicyPage() {
             <p className="text-gray-600 mb-4">
               If you have any questions about this Privacy Policy, please contact us at:
               <br />
-              Email: support@simpaw.com
+              Email: druhin.mukherjee@gmail.com
               <br />
               Address: [Your Business Address]
             </p>
