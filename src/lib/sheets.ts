@@ -8,24 +8,38 @@ interface SheetRow {
 
 // Format private key by replacing literal \n with actual newlines
 const formatPrivateKey = (key: string) => {
-  // First, remove any extra whitespace and quotes
-  let formattedKey = key.trim();
-  if (formattedKey.startsWith('"') && formattedKey.endsWith('"')) {
-    formattedKey = formattedKey.slice(1, -1);
+  try {
+    // First, remove any extra whitespace and quotes
+    let formattedKey = key.trim();
+    if (formattedKey.startsWith('"') && formattedKey.endsWith('"')) {
+      formattedKey = formattedKey.slice(1, -1);
+    }
+    
+    // Replace literal \n with actual newlines
+    formattedKey = formattedKey.replace(/\\n/g, '\n');
+    
+    // Ensure proper header and footer
+    if (!formattedKey.includes('-----BEGIN PRIVATE KEY-----')) {
+      formattedKey = '-----BEGIN PRIVATE KEY-----\n' + formattedKey;
+    }
+    if (!formattedKey.includes('-----END PRIVATE KEY-----')) {
+      formattedKey = formattedKey + '\n-----END PRIVATE KEY-----\n';
+    }
+
+    console.log('Private key formatting:', {
+      length: formattedKey.length,
+      hasHeader: formattedKey.includes('-----BEGIN PRIVATE KEY-----'),
+      hasFooter: formattedKey.includes('-----END PRIVATE KEY-----'),
+      newlineCount: (formattedKey.match(/\n/g) || []).length,
+      firstChar: formattedKey[0],
+      lastChar: formattedKey[formattedKey.length - 1]
+    });
+    
+    return formattedKey;
+  } catch (error) {
+    console.error('Error formatting private key:', error);
+    throw error;
   }
-  
-  // Replace literal \n with actual newlines
-  formattedKey = formattedKey.replace(/\\n/g, '\n');
-  
-  // Ensure proper header and footer
-  if (!formattedKey.includes('-----BEGIN PRIVATE KEY-----')) {
-    formattedKey = '-----BEGIN PRIVATE KEY-----\n' + formattedKey;
-  }
-  if (!formattedKey.includes('-----END PRIVATE KEY-----')) {
-    formattedKey = formattedKey + '\n-----END PRIVATE KEY-----\n';
-  }
-  
-  return formattedKey;
 };
 
 // Validate environment variables
@@ -87,24 +101,37 @@ export async function getSheets() {
 export async function getSheetData(range: string): Promise<SheetData> {
   try {
     validateEnvVariables();
-    console.log('Fetching data from sheet ID:', process.env.SHEET_ID);
-    console.log('Using range:', range);
+    console.log('Sheets API - Starting data fetch:', {
+      range,
+      sheetId: process.env.SHEET_ID?.substring(0, 5) + '...',
+    });
 
     const sheets = await getSheets();
+    console.log('Sheets API - Successfully initialized Google Sheets client');
+
+    console.log('Sheets API - Making API request...');
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: process.env.SHEET_ID,
       range,
     });
-
-    console.log('Response received:', !!response.data);
-    console.log('Values received:', !!response.data.values);
-    console.log('Number of rows:', response.data.values?.length || 0);
+    console.log('Sheets API - Received response:', {
+      hasData: !!response.data,
+      hasValues: !!response.data.values,
+      rowCount: response.data.values?.length || 0
+    });
 
     return {
       data: response.data.values || [],
     };
-  } catch (error) {
-    console.error('Error getting sheet data:', error);
+  } catch (error: any) {
+    console.error('Sheets API - Error details:', {
+      message: error.message,
+      code: error.code,
+      status: error.status,
+      errors: error.errors,
+      stack: error.stack,
+      response: error.response?.data
+    });
     throw error;
   }
 }
