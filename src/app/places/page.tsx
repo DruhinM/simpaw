@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { 
   MapPinIcon, 
   StarIcon, 
@@ -14,6 +14,7 @@ import Image from 'next/image';
 import { fetchSheetData, transformPlaceData } from '@/lib/data';
 import { Spinner } from '@/components/Spinner';
 import { Pagination } from '@/components/Pagination';
+import { Dialog } from '@headlessui/react';
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1550697851-920b181d8ca8?w=800&h=600&fit=crop';
 const ITEMS_PER_PAGE = 4;
@@ -24,6 +25,9 @@ export default function PlacesPage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("All Places");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [form, setForm] = useState({ name: '', address: '', type: '', description: '', email: '' });
+  const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     async function loadPlaces() {
@@ -51,10 +55,12 @@ export default function PlacesPage() {
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const currentPlaces = filteredPlaces.slice(startIndex, endIndex);
 
+  // Dynamic stats
+  const uniqueCities = Array.from(new Set(places.map((p) => (p.address || '').split(',').slice(-2, -1)[0]?.trim()).filter(Boolean)));
   const stats = [
     { name: 'Pet-Friendly Locations', value: places.length, icon: BuildingStorefrontIcon },
     { name: 'Happy Visitors', value: '1,000+', icon: UserGroupIcon },
-    { name: 'Cities Covered', value: '10+', icon: MapIcon },
+    { name: 'Cities Covered', value: uniqueCities.length, icon: MapIcon },
   ];
 
   const categories = [
@@ -232,12 +238,41 @@ export default function PlacesPage() {
               Help other pet parents discover great places by adding your recommendations.
             </p>
             <div className="mt-6">
-              <button className="rounded-md bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">
+              <button
+                className="rounded-md bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
+                onClick={() => setIsModalOpen(true)}
+              >
                 Add a Place
               </button>
             </div>
           </div>
         </div>
+        {/* Modal for Add Place */}
+        <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} className="fixed z-50 inset-0 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4">
+            <div aria-hidden className="fixed inset-0 bg-black opacity-30" />
+            <div className="relative bg-white rounded-lg max-w-md w-full mx-auto p-8 z-10">
+              <Dialog.Title className="text-lg font-bold mb-4">Add a Pet-Friendly Place</Dialog.Title>
+              <form ref={formRef} onSubmit={e => {
+                e.preventDefault();
+                const mailto = `mailto:druhin.mukherjee@gmail.com?subject=Pet%20Friendly%20Place%20Submission&body=Name:%20${encodeURIComponent(form.name)}%0AEmail:%20${encodeURIComponent(form.email)}%0AType:%20${encodeURIComponent(form.type)}%0AAddress:%20${encodeURIComponent(form.address)}%0ADescription:%20${encodeURIComponent(form.description)}`;
+                window.open(mailto, '_blank');
+                setIsModalOpen(false);
+                setForm({ name: '', address: '', type: '', description: '', email: '' });
+              }} className="space-y-4">
+                <input required className="w-full border rounded px-3 py-2" placeholder="Your Name" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
+                <input required type="email" className="w-full border rounded px-3 py-2" placeholder="Your Email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
+                <input required className="w-full border rounded px-3 py-2" placeholder="Place Name & Type (e.g. Cafe, Park)" value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))} />
+                <input required className="w-full border rounded px-3 py-2" placeholder="Address" value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} />
+                <textarea required className="w-full border rounded px-3 py-2" placeholder="Description" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} rows={4} />
+                <div className="flex justify-end gap-2">
+                  <button type="button" className="px-4 py-2 rounded bg-gray-200" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                  <button type="submit" className="px-4 py-2 rounded bg-indigo-600 text-white">Send</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </Dialog>
       </div>
     </div>
   );

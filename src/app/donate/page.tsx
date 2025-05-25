@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   HeartIcon,
   GiftIcon,
@@ -13,6 +13,7 @@ import {
   QrCodeIcon
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
+import { getDonations } from '@/lib/data';
 
 export default function DonatePage() {
   const stats = [
@@ -85,6 +86,22 @@ export default function DonatePage() {
       icon: ArrowPathIcon
     }
   ];
+
+  const [contributors, setContributors] = useState<string[]>([]);
+
+  useEffect(() => {
+    async function fetchContributors() {
+      try {
+        const donations = await getDonations();
+        const names = donations.map((d) => d.donor).filter(Boolean);
+        const uniqueNames = Array.from(new Set(names));
+        setContributors(uniqueNames);
+      } catch (e) {
+        setContributors([]);
+      }
+    }
+    fetchContributors();
+  }, []);
 
   return (
     <div className="pt-24 pb-16">
@@ -218,6 +235,20 @@ export default function DonatePage() {
             ))}
           </div>
         </div>
+
+        {/* Contributors Section */}
+        {contributors.length > 0 && (
+          <div className="mt-20">
+            <h2 className="text-2xl font-bold text-center mb-8">Our Contributors</h2>
+            <div className="flex flex-wrap justify-center gap-4">
+              {contributors.map((name) => (
+                <span key={name} className="inline-block rounded-full bg-indigo-100 text-indigo-700 px-5 py-2 text-base font-semibold shadow-sm">
+                  {name}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

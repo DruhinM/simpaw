@@ -8,6 +8,7 @@ import {
   ArrowPathIcon,
   CloudArrowUpIcon,
   UserGroupIcon,
+  StarIcon,
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 
@@ -18,6 +19,7 @@ interface Tip {
   content: string;
   imageUrl: string;
   createdAt: string;
+  featured: boolean;
 }
 
 const ITEMS_PER_PAGE = 6;
@@ -52,6 +54,17 @@ export default function TipsPage() {
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const currentTips = tips.slice(startIndex, endIndex);
 
+  // Calculate dynamic stats
+  const totalTips = tips.length;
+  const uniqueCategories = new Set(tips.map(tip => tip.category)).size;
+  const featuredTips = tips.filter(tip => tip.featured).length;
+
+  const stats = [
+    { name: 'Total Tips', value: `${totalTips}+`, icon: ArrowPathIcon },
+    { name: 'Categories', value: uniqueCategories, icon: CloudArrowUpIcon },
+    { name: 'Featured Tips', value: featuredTips, icon: StarIcon },
+  ];
+
   if (loading) {
     return <Spinner />;
   }
@@ -63,12 +76,6 @@ export default function TipsPage() {
       </div>
     );
   }
-
-  const stats = [
-    { name: 'Happy Pet Parents', value: '10,000+', icon: UserGroupIcon },
-    { name: 'Expert Tips', value: '500+', icon: ArrowPathIcon },
-    { name: 'Success Stories', value: '2,500+', icon: CloudArrowUpIcon },
-  ];
 
   return (
     <div className="container mx-auto px-4 py-8">

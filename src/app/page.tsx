@@ -90,7 +90,7 @@ const features = [
   {
     name: 'Find Services',
     description: 'Locate veterinarians, pet-friendly locations, and other essential services in your area.',
-    href: '/services',
+    href: '/vets',
   },
   {
     name: 'Community Stories',

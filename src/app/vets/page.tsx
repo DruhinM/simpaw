@@ -25,6 +25,7 @@ interface Vet {
   services: string[];
   rating: number;
   imageUrl: string;
+  emergency: boolean;
 }
 
 const ITEMS_PER_PAGE = 4;
@@ -59,10 +60,15 @@ export default function VetsPage() {
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const currentVets = vets.slice(startIndex, endIndex);
 
+  // Calculate dynamic stats
+  const totalClinics = vets.length;
+  const averageRating = vets.reduce((acc, vet) => acc + vet.rating, 0) / vets.length;
+  const emergencyServices = vets.filter(vet => vet.emergency).length;
+
   const stats = [
-    { name: 'Verified Clinics', value: '500+', icon: BuildingOffice2Icon },
-    { name: 'Pet Parents Served', value: '50,000+', icon: UserGroupIcon },
-    { name: 'Expert Veterinarians', value: '1,000+', icon: AcademicCapIcon },
+    { name: 'Verified Clinics', value: `${totalClinics}+`, icon: BuildingOffice2Icon },
+    { name: 'Average Rating', value: averageRating.toFixed(1), icon: StarIcon },
+    { name: 'Emergency Services', value: `${emergencyServices}+`, icon: ShieldCheckIcon },
   ];
 
   if (loading) {

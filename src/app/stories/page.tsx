@@ -24,6 +24,11 @@ interface Story {
   content: string;
   createdAt: string;
   imageUrl: string;
+  category: string;
+  date: string;
+  fullStory?: string;
+  preview?: string;
+  likes?: number;
 }
 
 const ITEMS_PER_PAGE = 4;
@@ -85,82 +90,81 @@ export default function StoriesPage() {
 
         {/* Featured Story - Using first story as featured */}
         {stories.length > 0 && (
-          <div className="mt-16 overflow-hidden bg-white rounded-xl shadow-lg">
-            <div className="grid grid-cols-1 lg:grid-cols-2">
-              <div className="relative h-64 lg:h-auto">
-                <Image
-                  src={stories[0].imageUrl}
-                  alt={stories[0].title}
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 bg-indigo-600 mix-blend-multiply opacity-20" />
+          <div className="mt-16 overflow-hidden bg-gradient-to-r from-indigo-50 to-white rounded-2xl shadow-xl flex flex-col md:flex-row">
+            <div className="relative w-full md:w-1/2 h-72 md:h-auto">
+              <Image
+                src={stories[0].imageUrl}
+                alt={stories[0].title}
+                fill
+                className="object-cover rounded-t-2xl md:rounded-l-2xl md:rounded-t-none"
+              />
+              <div className="absolute inset-0 bg-indigo-600/30 mix-blend-multiply rounded-t-2xl md:rounded-l-2xl md:rounded-t-none" />
+            </div>
+            <div className="flex-1 p-8 flex flex-col justify-center">
+              <div className="flex items-center gap-x-4 mb-2">
+                <span className="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-xs font-medium text-indigo-700">
+                  {stories[0].category}
+                </span>
+                <time dateTime={stories[0].date} className="text-sm text-gray-500">
+                  {new Date(stories[0].date).toLocaleDateString()}
+                </time>
+                <span className="inline-flex items-center rounded-full bg-indigo-600 px-2 py-1 text-xs font-medium text-white ml-auto">
+                  Featured
+                </span>
               </div>
-              <div className="px-6 py-8 lg:px-8">
-                <div className="flex items-center gap-x-4">
-                  <time dateTime={stories[0].createdAt} className="text-sm text-gray-500">
-                    {new Date(stories[0].createdAt).toLocaleDateString()}
-                  </time>
-                  <span className="inline-flex items-center rounded-full bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700">
-                    Featured
-                  </span>
-                </div>
-                <h2 className="mt-4 text-2xl font-bold text-gray-900">{stories[0].title}</h2>
-                <p className="mt-4 text-gray-600">{stories[0].content}</p>
-                <div className="mt-6 flex items-center gap-x-4">
-                  <UserCircleIcon className="h-10 w-10 text-gray-400" />
-                  <div>
-                    <p className="font-semibold text-gray-900">{stories[0].author}</p>
-                    <p className="text-sm text-gray-600">Pet Parent</p>
-                  </div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">{stories[0].title}</h2>
+              <p className="text-gray-700 text-lg mb-4 line-clamp-4">{stories[0].fullStory || stories[0].preview}</p>
+              <div className="flex items-center gap-x-4 mt-auto">
+                <UserCircleIcon className="h-8 w-8 text-gray-400" />
+                <div>
+                  <p className="font-semibold text-gray-900">{stories[0].author}</p>
+                  <p className="text-sm text-gray-600">Pet Parent</p>
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-12">
+        {/* Modern Card Grid for Stories */}
+        <div className="mx-auto mt-16 grid max-w-5xl grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {currentStories.map((story) => (
-            <article key={story.id} className="flex flex-col bg-white rounded-xl shadow-sm p-6">
-              <div className="relative h-48 w-full mb-4">
-                <Image src={story.imageUrl} alt={story.title} fill className="object-cover rounded-lg" />
+            <article key={story.id} className="flex flex-col bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow p-0 overflow-hidden border border-gray-100">
+              <div className="relative h-48 w-full">
+                <Image src={story.imageUrl} alt={story.title} fill className="object-cover" />
+                <span className="absolute top-4 left-4 inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-xs font-medium text-indigo-700 z-10">
+                  {story.category}
+                </span>
               </div>
-              <div className="flex items-center gap-x-4 text-xs">
-                <div className="flex items-center gap-2">
+              <div className="flex-1 flex flex-col p-6">
+                <div className="flex items-center gap-x-3 text-xs mb-2">
                   <CalendarIcon className="h-4 w-4 text-gray-400" />
-                  <time dateTime={story.createdAt} className="text-gray-500">
-                    {new Date(story.createdAt).toLocaleDateString()}
+                  <time dateTime={story.date} className="text-gray-500">
+                    {new Date(story.date).toLocaleDateString()}
                   </time>
+                  <UserCircleIcon className="h-4 w-4 text-gray-400 ml-4" />
+                  <span className="text-gray-600">{story.author}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <UserCircleIcon className="h-4 w-4 text-gray-400" />
-                  <span className="text-gray-600">By {story.author}</span>
-                </div>
-              </div>
-              <div className="group relative mt-4">
-                <h3 className="text-lg font-semibold leading-6 text-gray-900">{story.title}</h3>
-                <p className="mt-3 text-sm leading-6 text-gray-600">
-                  {story.content}
-                </p>
-              </div>
-              <div className="mt-6 flex items-center justify-between">
-                <div className="flex gap-6">
-                  <button className="flex items-center gap-2 text-gray-600 hover:text-indigo-600">
-                    <HeartIcon className="h-5 w-5" />
-                    <span>0</span>
-                  </button>
-                  <button className="flex items-center gap-2 text-gray-600 hover:text-indigo-600">
-                    <ChatBubbleLeftIcon className="h-5 w-5" />
-                    <span>0</span>
-                  </button>
-                </div>
-                <div className="flex gap-4">
-                  <button className="text-gray-600 hover:text-indigo-600">
-                    <ShareIcon className="h-5 w-5" />
-                  </button>
-                  <button className="text-gray-600 hover:text-indigo-600">
-                    <BookmarkIcon className="h-5 w-5" />
-                  </button>
+                <h3 className="text-lg font-semibold leading-6 text-gray-900 mb-2">{story.title}</h3>
+                <p className="text-gray-700 text-sm leading-6 flex-1 mb-4 line-clamp-4">{story.fullStory || story.preview}</p>
+                <div className="flex items-center justify-between mt-auto">
+                  <div className="flex gap-4">
+                    <button className="flex items-center gap-1 text-gray-500 hover:text-indigo-600 text-xs">
+                      <HeartIcon className="h-4 w-4" />
+                      <span>{story.likes || 0}</span>
+                    </button>
+                    <button className="flex items-center gap-1 text-gray-500 hover:text-indigo-600 text-xs">
+                      <ChatBubbleLeftIcon className="h-4 w-4" />
+                      <span>0</span>
+                    </button>
+                  </div>
+                  <div className="flex gap-2">
+                    <button className="text-gray-500 hover:text-indigo-600">
+                      <ShareIcon className="h-4 w-4" />
+                    </button>
+                    <button className="text-gray-500 hover:text-indigo-600">
+                      <BookmarkIcon className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </article>
