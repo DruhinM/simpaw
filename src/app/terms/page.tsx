@@ -14,7 +14,7 @@ export default function TermsPage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">1. Acceptance of Terms</h2>
             <p className="text-gray-600 mb-4">
-              By accessing and using Simpaw&apos;s services, you agree to these terms.
+              By accessing and using SimpawPets&apos; services, you agree to these terms.
               If you do not agree to these terms, please do not use our service.
             </p>
           </section>

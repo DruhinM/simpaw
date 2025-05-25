@@ -2,6 +2,10 @@ import { google } from 'googleapis';
 import { GoogleAuth } from 'google-auth-library';
 import { SheetData } from '@/types';
 
+interface SheetRow {
+  [key: string]: string | number | boolean;
+}
+
 // Initialize auth
 const auth = new GoogleAuth({
   credentials: {
@@ -14,9 +18,9 @@ const auth = new GoogleAuth({
 // Initialize sheets
 export async function getSheets() {
   const client = await auth.getClient();
-  return google.sheets({ 
-    version: 'v4', 
-    auth: client 
+  return google.sheets({
+    version: 'v4',
+    auth: client as any // Type assertion needed due to Google API types mismatch
   });
 }
 
@@ -97,4 +101,8 @@ function getSheetId(sheetName: string) {
     'Donations': 4,
   };
   return sheetIds[sheetName];
+}
+
+export const appendToSheet = async (sheetName: string, values: SheetRow[]): Promise<void> => {
+  // ... existing code ...
 } 

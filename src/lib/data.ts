@@ -133,4 +133,118 @@ export function transformDonationData(donation: any) {
     anonymity: donation[13] || '',
     receipt: donation[14] || ''
   };
+}
+
+interface Pet {
+  id: string;
+  name: string;
+  type: string;
+  breed: string;
+  age: number;
+  description: string;
+  image: string;
+  location: string;
+  status: string;
+}
+
+interface Story {
+  id: string;
+  title: string;
+  content: string;
+  image: string;
+  date: string;
+}
+
+interface Tip {
+  id: string;
+  title: string;
+  content: string;
+  category: string;
+}
+
+interface Vet {
+  id: string;
+  name: string;
+  location: string;
+  contact: string;
+  specialization: string;
+}
+
+interface Place {
+  id: string;
+  name: string;
+  type: string;
+  location: string;
+  contact: string;
+  description: string;
+}
+
+type SheetRow = string[];
+
+export const getPets = async (): Promise<Pet[]> => {
+  const data = await fetchSheetData('Pets');
+  return data.map((pet: SheetRow) => ({
+    id: pet[0] || String(Date.now()),
+    name: pet[1] || '',
+    type: pet[2] || '',
+    breed: pet[3] || '',
+    age: Number(pet[4]) || 0,
+    description: pet[5] || '',
+    image: pet[6] || DEFAULT_IMAGE_URL,
+    location: pet[7] || '',
+    status: pet[8] || 'Available'
+  }));
+}
+
+export const getStories = async (): Promise<Story[]> => {
+  const data = await fetchSheetData('Stories');
+  return data.map((story: SheetRow) => ({
+    id: story[0] || String(Date.now()),
+    title: story[1] || '',
+    content: story[2] || '',
+    image: story[3] || DEFAULT_IMAGE_URL,
+    date: story[4] || new Date().toISOString()
+  }));
+}
+
+export const getTips = async (): Promise<Tip[]> => {
+  const data = await fetchSheetData('Tips');
+  return data.map((tip: SheetRow) => ({
+    id: tip[0] || String(Date.now()),
+    title: tip[1] || '',
+    content: tip[2] || '',
+    category: tip[3] || 'General'
+  }));
+}
+
+export const getVets = async (): Promise<Vet[]> => {
+  const data = await fetchSheetData('Vets');
+  return data.map((vet: SheetRow) => ({
+    id: vet[0] || String(Date.now()),
+    name: vet[1] || '',
+    location: vet[2] || '',
+    contact: vet[3] || '',
+    specialization: vet[4] || ''
+  }));
+}
+
+export const getPlaces = async (): Promise<Place[]> => {
+  const data = await fetchSheetData('Places');
+  return data.map((place: SheetRow) => ({
+    id: place[0] || String(Date.now()),
+    name: place[1] || '',
+    type: place[2] || '',
+    location: place[3] || '',
+    contact: place[4] || '',
+    description: place[5] || ''
+  }));
+}
+
+export const getDonations = async (): Promise<{ amount: number; date: string; donor: string }[]> => {
+  const data = await fetchSheetData('Donations');
+  return data.map((donation: SheetRow) => ({
+    amount: Number(donation[0]) || 0,
+    date: donation[1] || new Date().toISOString(),
+    donor: donation[2] || 'Anonymous'
+  }));
 } 

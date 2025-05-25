@@ -78,6 +78,8 @@ export default function RefundPolicyPage() {
           <p className="mt-4 text-base text-gray-600">
             &ldquo;No refund&rdquo; policy for digital services
           </p>
+
+          <p>What we mean by &quot;donation&quot; and &quot;refund&quot;</p>
         </div>
       </div>
     </div>
