@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   HeartIcon,
   GiftIcon,
@@ -9,14 +9,10 @@ import {
   CurrencyDollarIcon,
   ArrowPathIcon,
   UserGroupIcon,
-  HandRaisedIcon
+  HandRaisedIcon,
+  QrCodeIcon
 } from '@heroicons/react/24/outline';
-
-declare global {
-  interface Window {
-    Razorpay: any;
-  }
-}
+import Image from 'next/image';
 
 export default function DonatePage() {
   const stats = [
@@ -90,62 +86,6 @@ export default function DonatePage() {
     }
   ];
 
-  useEffect(() => {
-    // Load Razorpay script
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
-    document.body.appendChild(script);
-  }, []);
-
-  const handleDonation = async (amount: number) => {
-    try {
-      // Create order
-      const response = await fetch('/api/razorpay', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ amount }),
-      });
-
-      const data = await response.json();
-
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      // Initialize Razorpay payment
-      const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: data.amount,
-        currency: data.currency,
-        name: 'Simpaw',
-        description: 'Donation to help pets in need',
-        order_id: data.orderId,
-        handler: function (response: any) {
-          console.log('Payment successful:', response);
-          // Here you can add code to show success message
-          // and update your backend about successful payment
-        },
-        prefill: {
-          name: '',
-          email: '',
-          contact: ''
-        },
-        theme: {
-          color: '#4F46E5'
-        }
-      };
-
-      const razorpay = new window.Razorpay(options);
-      razorpay.open();
-    } catch (error) {
-      console.error('Payment error:', error);
-      // Here you can add code to show error message
-    }
-  };
-
   return (
     <div className="pt-24 pb-16">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -168,6 +108,60 @@ export default function DonatePage() {
               </div>
             ))}
           </dl>
+        </div>
+
+        {/* QR Code Payment Section */}
+        <div className="mt-16 rounded-2xl bg-white shadow-sm ring-1 ring-gray-200">
+          <div className="px-6 py-8 sm:p-10">
+            <div className="flex flex-col items-center text-center">
+              <QrCodeIcon className="h-12 w-12 text-indigo-600 mb-4" />
+              <h2 className="text-2xl font-bold text-gray-900">Scan to Donate</h2>
+              <p className="mt-2 text-lg text-gray-600">
+                Choose your preferred amount and scan the QR code to make your donation
+              </p>
+            </div>
+
+            <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
+              {/* QR Code Display */}
+              <div className="flex flex-col items-center p-6 bg-gray-50 rounded-xl">
+                <div className="relative w-64 h-64 mb-4">
+                  <Image
+                    src="/qr-code.png" // Add your QR code image here
+                    alt="Payment QR Code"
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+                <p className="text-sm text-gray-600 text-center">
+                  Scan with any UPI app or bank app
+                </p>
+              </div>
+
+              {/* Donation Amounts */}
+              <div className="flex flex-col justify-center">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Suggested Donation Amounts</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  {['500', '1000', '2500', '5000'].map((amount) => (
+                    <div
+                      key={amount}
+                      className="flex items-center justify-center p-4 bg-indigo-50 rounded-lg text-indigo-600 font-semibold"
+                    >
+                      ₹{amount}
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-4 text-sm text-gray-600">
+                  After making your donation, please email us at support@simpaw.com with:
+                </p>
+                <ul className="mt-2 text-sm text-gray-600 list-disc list-inside">
+                  <li>Your name</li>
+                  <li>Transaction ID</li>
+                  <li>Donation amount</li>
+                  <li>Preferred tier (if any)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Impact Areas */}
@@ -217,70 +211,11 @@ export default function DonatePage() {
                     </li>
                   ))}
                 </ul>
-                <button
-                  onClick={() => handleDonation(parseInt(tier.price.replace(/,/g, '')))}
-                  className={`mt-8 w-full rounded-md px-4 py-2.5 text-sm font-semibold shadow-sm ${
-                    tier.popular
-                      ? 'bg-indigo-600 text-white hover:bg-indigo-500'
-                      : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'
-                  }`}
-                >
-                  Donate {tier.name}
-                </button>
+                <div className="mt-8 text-center text-sm text-gray-600">
+                  Scan QR code above and mention "{tier.name}" in your email
+                </div>
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* One-time Donation */}
-        <div className="mt-16 rounded-2xl bg-indigo-50 py-10 px-6 sm:py-16 sm:px-12">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-2xl font-bold tracking-tight text-indigo-900">Prefer a One-time Donation?</h2>
-            <p className="mt-4 text-lg leading-6 text-indigo-700">
-              Every contribution helps! Choose your own amount and make a difference today.
-            </p>
-            <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
-              {['500', '1000', '2500', '5000'].map((amount) => (
-                <button
-                  key={amount}
-                  onClick={() => handleDonation(parseInt(amount))}
-                  className="rounded-md bg-white px-6 py-3 text-sm font-semibold text-indigo-600 shadow-sm hover:bg-indigo-50"
-                >
-                  ₹{amount}
-                </button>
-              ))}
-              <button 
-                onClick={() => {
-                  const amount = prompt('Enter donation amount in INR:');
-                  if (amount && !isNaN(parseInt(amount))) {
-                    handleDonation(parseInt(amount));
-                  }
-                }}
-                className="rounded-md bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
-              >
-                Custom Amount
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Trust Indicators */}
-        <div className="mt-16 border-t border-gray-100 pt-10">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
-            <div className="flex items-center justify-center gap-x-4 rounded-xl bg-gray-50 p-8">
-              <ShieldCheckIcon className="h-12 w-12 text-gray-400" />
-              <div>
-                <h3 className="text-base font-semibold text-gray-900">Secure Payments</h3>
-                <p className="mt-1 text-sm text-gray-600">Your donation is safe and secure</p>
-              </div>
-            </div>
-            <div className="flex items-center justify-center gap-x-4 rounded-xl bg-gray-50 p-8">
-              <SparklesIcon className="h-12 w-12 text-gray-400" />
-              <div>
-                <h3 className="text-base font-semibold text-gray-900">100% to Pets</h3>
-                <p className="mt-1 text-sm text-gray-600">Every penny goes to helping pets in need</p>
-              </div>
-            </div>
           </div>
         </div>
       </div>
