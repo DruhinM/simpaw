@@ -13,6 +13,7 @@ import {
 import { fetchSheetData } from '@/lib/data';
 import { transformStoryData } from '@/lib/data';
 import { Spinner } from '@/components/Spinner';
+import { Pagination } from '@/components/Pagination';
 
 interface Story {
   id: string;
@@ -23,10 +24,13 @@ interface Story {
   imageUrl: string;
 }
 
+const ITEMS_PER_PAGE = 4;
+
 export default function StoriesPage() {
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     async function loadStories() {
@@ -34,6 +38,8 @@ export default function StoriesPage() {
         const data = await fetchSheetData('Stories');
         // Skip header row and transform data
         const transformedStories = data.slice(1).map(transformStoryData);
+        // Sort by date, most recent first
+        transformedStories.sort((a: Story, b: Story) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         setStories(transformedStories);
       } catch (err: any) {
         setError(err.message);
@@ -44,6 +50,11 @@ export default function StoriesPage() {
 
     loadStories();
   }, []);
+
+  const totalPages = Math.ceil((stories.length - 1) / ITEMS_PER_PAGE); // -1 for featured story
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE + 1; // +1 to skip featured story
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentStories = stories.slice(startIndex, endIndex);
 
   if (loading) {
     return <Spinner />;
@@ -104,7 +115,7 @@ export default function StoriesPage() {
         )}
 
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-12">
-          {stories.slice(1).map((story) => (
+          {currentStories.map((story) => (
             <article key={story.id} className="flex flex-col bg-white rounded-xl shadow-sm p-6">
               <div className="flex items-center gap-x-4 text-xs">
                 <div className="flex items-center gap-2">
@@ -149,6 +160,14 @@ export default function StoriesPage() {
             </article>
           ))}
         </div>
+
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        )}
 
         {/* Share Your Story CTA */}
         <div className="mt-16 rounded-2xl bg-indigo-50 py-10 px-6 sm:py-16 sm:px-12">

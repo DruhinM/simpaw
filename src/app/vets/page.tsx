@@ -14,6 +14,7 @@ import {
 import Image from 'next/image';
 import { fetchSheetData, transformVetData } from '@/lib/data';
 import { Spinner } from '@/components/Spinner';
+import { Pagination } from '@/components/Pagination';
 
 interface Vet {
   id: string;
@@ -26,10 +27,13 @@ interface Vet {
   imageUrl: string;
 }
 
+const ITEMS_PER_PAGE = 4;
+
 export default function VetsPage() {
   const [vets, setVets] = useState<Vet[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     async function loadVets() {
@@ -37,6 +41,8 @@ export default function VetsPage() {
         const data = await fetchSheetData('Vets');
         // Skip header row and transform data
         const transformedVets = data.slice(1).map(transformVetData);
+        // Sort by rating, highest first
+        transformedVets.sort((a: Vet, b: Vet) => b.rating - a.rating);
         setVets(transformedVets);
       } catch (err: any) {
         setError(err.message);
@@ -47,6 +53,11 @@ export default function VetsPage() {
 
     loadVets();
   }, []);
+
+  const totalPages = Math.ceil(vets.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentVets = vets.slice(startIndex, endIndex);
 
   const stats = [
     { name: 'Verified Clinics', value: '500+', icon: BuildingOffice2Icon },
@@ -134,7 +145,7 @@ export default function VetsPage() {
         </div>
 
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-12 lg:mx-0 lg:max-w-none lg:grid-cols-2">
-          {vets.map((vet) => (
+          {currentVets.map((vet) => (
             <div key={vet.id} className="bg-white overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-shadow">
               <div className="relative h-48">
                 <Image
@@ -191,6 +202,14 @@ export default function VetsPage() {
             </div>
           ))}
         </div>
+
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        )}
 
         {/* Emergency Services CTA */}
         <div className="mt-16 rounded-2xl bg-red-50 py-10 px-6 sm:py-16 sm:px-12">

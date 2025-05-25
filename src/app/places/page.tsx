@@ -13,14 +13,17 @@ import {
 import Image from 'next/image';
 import { fetchSheetData, transformPlaceData } from '@/lib/data';
 import { Spinner } from '@/components/Spinner';
+import { Pagination } from '@/components/Pagination';
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1550697851-920b181d8ca8?w=800&h=600&fit=crop';
+const ITEMS_PER_PAGE = 4;
 
 export default function PlacesPage() {
   const [places, setPlaces] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("All Places");
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     async function loadPlaces() {
@@ -39,6 +42,15 @@ export default function PlacesPage() {
     loadPlaces();
   }, []);
 
+  const filteredPlaces = selectedCategory === "All Places" 
+    ? places 
+    : places.filter(place => place.type === selectedCategory);
+
+  const totalPages = Math.ceil(filteredPlaces.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentPlaces = filteredPlaces.slice(startIndex, endIndex);
+
   const stats = [
     { name: 'Pet-Friendly Locations', value: places.length, icon: BuildingStorefrontIcon },
     { name: 'Happy Visitors', value: '1,000+', icon: UserGroupIcon },
@@ -53,10 +65,6 @@ export default function PlacesPage() {
     "Pet Store",
     "Pet-Friendly Restaurant"
   ];
-
-  const filteredPlaces = selectedCategory === "All Places" 
-    ? places 
-    : places.filter(place => place.type === selectedCategory);
 
   if (loading) {
     return <Spinner />;
@@ -99,7 +107,10 @@ export default function PlacesPage() {
             {categories.map((category) => (
               <button
                 key={category}
-                onClick={() => setSelectedCategory(category)}
+                onClick={() => {
+                  setSelectedCategory(category);
+                  setCurrentPage(1); // Reset to first page when changing category
+                }}
                 className={`rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap ${
                   category === selectedCategory
                     ? 'bg-indigo-600 text-white'
@@ -113,7 +124,7 @@ export default function PlacesPage() {
         </div>
 
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-12 lg:mx-0 lg:max-w-none lg:grid-cols-2">
-          {filteredPlaces.map((place) => (
+          {currentPlaces.map((place) => (
             <div key={place.id} className="bg-white overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-shadow">
               <div className="relative h-48">
                 <Image
@@ -203,6 +214,14 @@ export default function PlacesPage() {
             </div>
           ))}
         </div>
+
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        )}
 
         {/* Add Place CTA */}
         <div className="mt-16 rounded-2xl bg-indigo-50 py-10 px-6 sm:py-16 sm:px-12">

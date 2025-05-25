@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchSheetData, transformTipData } from '@/lib/data';
 import { Spinner } from '@/components/Spinner';
+import { Pagination } from '@/components/Pagination';
 import { 
   ArrowPathIcon,
   CloudArrowUpIcon,
@@ -19,10 +20,13 @@ interface Tip {
   createdAt: string;
 }
 
+const ITEMS_PER_PAGE = 6;
+
 export default function TipsPage() {
   const [tips, setTips] = useState<Tip[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     async function loadTips() {
@@ -30,6 +34,8 @@ export default function TipsPage() {
         const data = await fetchSheetData('Tips');
         // Skip header row and transform data
         const transformedTips = data.slice(1).map(transformTipData);
+        // Sort by date, most recent first
+        transformedTips.sort((a: Tip, b: Tip) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         setTips(transformedTips);
       } catch (err: any) {
         setError(err.message);
@@ -40,6 +46,11 @@ export default function TipsPage() {
 
     loadTips();
   }, []);
+
+  const totalPages = Math.ceil(tips.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentTips = tips.slice(startIndex, endIndex);
 
   if (loading) {
     return <Spinner />;
@@ -64,7 +75,7 @@ export default function TipsPage() {
       <h1 className="text-3xl font-bold text-center mb-8">Pet Care Tips & Tricks</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {tips.map((tip) => (
+        {currentTips.map((tip) => (
           <div key={tip.id} className="bg-white rounded-lg shadow-md overflow-hidden">
             {tip.imageUrl && (
               <div className="relative h-64 w-full">
@@ -89,6 +100,14 @@ export default function TipsPage() {
           </div>
         ))}
       </div>
+
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      )}
 
       <div className="pt-24 pb-16">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
