@@ -76,10 +76,10 @@ export default function VetsPage() {
     loadVets();
   }, []);
 
-  // Extract unique cities from addresses
+  // Extract unique cities from addresses (use first part for direct city entry)
   const allCities = Array.from(new Set(vets.map(vet => {
     const parts = vet.address.split(',').map(s => s.trim());
-    return parts.length > 1 ? parts[parts.length - 2] : 'Unknown';
+    return parts[0] || 'Unknown';
   }))).filter(Boolean);
   allCities.unshift('All Cities');
 
@@ -90,7 +90,7 @@ export default function VetsPage() {
   // Filter vets based on selected filters
   const filteredVets = vets.filter(vet => {
     const parts = vet.address.split(',').map(s => s.trim());
-    const vetCity = parts.length > 1 ? parts[parts.length - 2] : 'Unknown';
+    const vetCity = parts[0] || 'Unknown';
     const cityMatch = selectedCity === 'All Cities' || vetCity === selectedCity;
     const specialtyMatch = selectedSpecialty === 'All Specialties' || vet.services.includes(selectedSpecialty);
     return cityMatch && specialtyMatch;
