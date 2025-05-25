@@ -96,7 +96,13 @@ export default function StoriesPage() {
 
         {/* Featured Story - Using first story as featured */}
         {stories.length > 0 && (
-          <div className="mt-16 overflow-hidden bg-gradient-to-r from-indigo-50 to-white rounded-2xl shadow-xl flex flex-col md:flex-row">
+          <div
+            className="mt-16 overflow-hidden bg-gradient-to-r from-indigo-50 to-white rounded-2xl shadow-xl flex flex-col md:flex-row cursor-pointer"
+            onClick={() => setSelectedStory(stories[0])}
+            tabIndex={0}
+            role="button"
+            aria-label="Open featured story"
+          >
             <div className="relative w-full md:w-1/2 h-72 md:h-auto">
               <Image
                 src={stories[0].imageUrl}
