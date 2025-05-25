@@ -40,6 +40,9 @@ export default function VetsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form, setForm] = useState({ name: '', vetName: '', location: '', contact: '', reason: '' });
   const formRef = useRef<HTMLFormElement>(null);
+  // Add filter state
+  const [selectedCity, setSelectedCity] = useState('All Cities');
+  const [selectedSpecialty, setSelectedSpecialty] = useState('All Specialties');
 
   useEffect(() => {
     async function loadVets() {
@@ -60,10 +63,31 @@ export default function VetsPage() {
     loadVets();
   }, []);
 
-  const totalPages = Math.ceil(vets.length / ITEMS_PER_PAGE);
+  // Extract unique cities from addresses
+  const allCities = Array.from(new Set(vets.map(vet => {
+    // Try to extract city from address (assume city is second-to-last part)
+    const parts = vet.address.split(',').map(s => s.trim());
+    return parts.length > 1 ? parts[parts.length - 2] : 'Unknown';
+  }))).filter(Boolean);
+  allCities.unshift('All Cities');
+
+  // Extract unique specialties from services
+  const allSpecialties = Array.from(new Set(vets.flatMap(vet => vet.services))).filter(Boolean);
+  allSpecialties.unshift('All Specialties');
+
+  // Filter vets based on selected filters
+  const filteredVets = vets.filter(vet => {
+    const city = vet.address.split(',').map(s => s.trim());
+    const vetCity = city.length > 1 ? city[city.length - 2] : 'Unknown';
+    const cityMatch = selectedCity === 'All Cities' || vetCity === selectedCity;
+    const specialtyMatch = selectedSpecialty === 'All Specialties' || vet.services.includes(selectedSpecialty);
+    return cityMatch && specialtyMatch;
+  });
+
+  const totalPages = Math.ceil(filteredVets.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
-  const currentVets = vets.slice(startIndex, endIndex);
+  const currentVets = filteredVets.slice(startIndex, endIndex);
 
   // Calculate dynamic stats
   const totalClinics = vets.length;
@@ -114,42 +138,32 @@ export default function VetsPage() {
         {/* Search Filters */}
         <div className="mt-16">
           <div className="rounded-xl bg-gray-50 p-6">
-            <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-3">
-              <div>
-                <label htmlFor="location" className="block text-sm font-medium text-gray-700">Location</label>
-                <input
-                  type="text"
-                  name="location"
-                  id="location"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                  placeholder="Enter your location"
-                />
+            <div className="mb-4">
+              <div className="mb-2 font-semibold text-gray-700">Filter by City</div>
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {allCities.map(city => (
+                  <button
+                    key={city}
+                    onClick={() => { setSelectedCity(city); setCurrentPage(1); }}
+                    className={`rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap border transition-colors ${selectedCity === city ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-900 border-gray-200 hover:bg-indigo-50'}`}
+                  >
+                    {city}
+                  </button>
+                ))}
               </div>
-              <div>
-                <label htmlFor="specialty" className="block text-sm font-medium text-gray-700">Specialty</label>
-                <select
-                  id="specialty"
-                  name="specialty"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                >
-                  <option>All Specialties</option>
-                  <option>General Care</option>
-                  <option>Surgery</option>
-                  <option>Emergency Care</option>
-                </select>
-              </div>
-              <div>
-                <label htmlFor="availability" className="block text-sm font-medium text-gray-700">Availability</label>
-                <select
-                  id="availability"
-                  name="availability"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                >
-                  <option>Any Time</option>
-                  <option>Today</option>
-                  <option>Tomorrow</option>
-                  <option>This Week</option>
-                </select>
+            </div>
+            <div>
+              <div className="mb-2 font-semibold text-gray-700">Filter by Specialty</div>
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {allSpecialties.map(specialty => (
+                  <button
+                    key={specialty}
+                    onClick={() => { setSelectedSpecialty(specialty); setCurrentPage(1); }}
+                    className={`rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap border transition-colors ${selectedSpecialty === specialty ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-900 border-gray-200 hover:bg-indigo-50'}`}
+                  >
+                    {specialty}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
