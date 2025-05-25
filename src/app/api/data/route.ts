@@ -1,6 +1,19 @@
 import { NextResponse } from 'next/server';
 import { getSheetData, updateSheetData, appendSheetData, deleteSheetRow } from '@/lib/sheets';
 
+// Helper function to handle CORS
+function corsResponse(response: NextResponse) {
+  response.headers.set('Access-Control-Allow-Origin', '*');
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+  return response;
+}
+
+// Handle OPTIONS request for CORS
+export async function OPTIONS() {
+  return corsResponse(new NextResponse(null, { status: 200 }));
+}
+
 export async function GET(request: Request) {
   try {
     // Log environment variables (excluding sensitive data)
@@ -13,10 +26,10 @@ export async function GET(request: Request) {
     const sheet = searchParams.get('sheet');
     
     if (!sheet) {
-      return NextResponse.json(
+      return corsResponse(NextResponse.json(
         { error: 'Sheet parameter is required' },
         { status: 400 }
-      );
+      ));
     }
 
     console.log('Fetching data from sheet:', sheet);
@@ -26,21 +39,20 @@ export async function GET(request: Request) {
     const data = await getSheetData(range);
     console.log('Data fetched successfully, rows:', data.data.length);
     
-    return NextResponse.json({ success: true, data: data.data });
+    return corsResponse(NextResponse.json({ success: true, data: data.data }));
   } catch (error: any) {
     console.error('Error in /api/data route:', error);
     console.error('Error message:', error.message);
     console.error('Error stack:', error.stack);
     
-    // Return a more detailed error response
-    return NextResponse.json(
+    return corsResponse(NextResponse.json(
       { 
         error: 'Failed to fetch data', 
         message: error.message,
         stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
       },
       { status: 500 }
-    );
+    ));
   }
 }
 
@@ -49,20 +61,20 @@ export async function POST(request: Request) {
     const { sheet, data } = await request.json();
     
     if (!sheet || !data) {
-      return NextResponse.json(
+      return corsResponse(NextResponse.json(
         { error: 'Sheet and data parameters are required' },
         { status: 400 }
-      );
+      ));
     }
 
     const result = await appendSheetData(sheet, [data]);
-    return NextResponse.json({ success: true, result });
+    return corsResponse(NextResponse.json({ success: true, result }));
   } catch (error: any) {
     console.error('Error adding data:', error);
-    return NextResponse.json(
+    return corsResponse(NextResponse.json(
       { error: 'Failed to add data', details: error.message },
       { status: 500 }
-    );
+    ));
   }
 }
 
@@ -71,14 +83,20 @@ export async function PUT(request: Request) {
     const { sheet, rowIndex, values } = await request.json();
 
     if (!sheet || !rowIndex || !values) {
-      return NextResponse.json({ error: 'Sheet, rowIndex, and values are required' }, { status: 400 });
+      return corsResponse(NextResponse.json(
+        { error: 'Sheet, rowIndex, and values are required' },
+        { status: 400 }
+      ));
     }
 
     const result = await updateSheetData(`${sheet}!A${rowIndex}:Z${rowIndex}`, [values]);
-    return NextResponse.json({ result });
+    return corsResponse(NextResponse.json({ result }));
   } catch (error) {
     console.error('Error updating data:', error);
-    return NextResponse.json({ error: 'Failed to update data' }, { status: 500 });
+    return corsResponse(NextResponse.json(
+      { error: 'Failed to update data' },
+      { status: 500 }
+    ));
   }
 }
 
@@ -89,13 +107,19 @@ export async function DELETE(request: Request) {
     const rowIndex = searchParams.get('rowIndex');
 
     if (!sheet || !rowIndex) {
-      return NextResponse.json({ error: 'Sheet and rowIndex are required' }, { status: 400 });
+      return corsResponse(NextResponse.json(
+        { error: 'Sheet and rowIndex are required' },
+        { status: 400 }
+      ));
     }
 
     const result = await deleteSheetRow(sheet, parseInt(rowIndex));
-    return NextResponse.json({ result });
+    return corsResponse(NextResponse.json({ result }));
   } catch (error) {
     console.error('Error deleting data:', error);
-    return NextResponse.json({ error: 'Failed to delete data' }, { status: 500 });
+    return corsResponse(NextResponse.json(
+      { error: 'Failed to delete data' },
+      { status: 500 }
+    ));
   }
 } 

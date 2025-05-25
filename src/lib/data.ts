@@ -1,13 +1,35 @@
-// Fetch data from API
-export async function fetchSheetData(sheet: string) {
-  const response = await fetch(`/api/data?sheet=${sheet}`);
-  const data = await response.json();
+// Fetch data from API with retries
+export async function fetchSheetData(sheet: string, retries = 3) {
+  let lastError;
   
-  if (!data.success) {
-    throw new Error(data.error);
+  for (let i = 0; i < retries; i++) {
+    try {
+      console.log(`Attempting to fetch data from sheet: ${sheet} (attempt ${i + 1}/${retries})`);
+      const response = await fetch(`/api/data?sheet=${sheet}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to fetch data');
+      }
+      
+      return data.data;
+    } catch (error) {
+      console.error(`Error fetching data (attempt ${i + 1}/${retries}):`, error);
+      lastError = error;
+      
+      // Wait before retrying (exponential backoff)
+      if (i < retries - 1) {
+        await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+      }
+    }
   }
   
-  return data.data;
+  throw lastError;
 }
 
 // Add data to sheet
