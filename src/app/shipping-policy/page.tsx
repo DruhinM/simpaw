@@ -1,12 +1,27 @@
 'use client';
 
 import React from 'react';
+import { TruckIcon } from '@heroicons/react/24/outline';
 
 export default function ShippingPolicyPage() {
   return (
     <div className="pt-24 pb-16">
       <div className="mx-auto max-w-3xl px-6 lg:px-8">
         <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mb-8">Shipping and Delivery Policy</h1>
+        
+        {/* No Shipping Required Notice */}
+        <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
+          <div className="flex items-center gap-4">
+            <TruckIcon className="h-8 w-8 text-green-600" />
+            <div>
+              <h2 className="text-xl font-semibold text-green-800">No Shipping Required</h2>
+              <p className="text-green-700 mt-1">
+                Simpaw is a digital service platform. All our services and content are delivered digitally, 
+                so no physical shipping is required. You get instant access to all features upon account creation.
+              </p>
+            </div>
+          </div>
+        </div>
         
         <div className="prose prose-lg">
           <p className="text-gray-600 mb-6">Last updated: {new Date().toLocaleDateString()}</p>
