@@ -17,13 +17,13 @@ export default function Home() {
   // Add NGO partners data (should match donations page)
   const ngoPartners = [
     {
-      name: 'Paws & Claws Foundation',
-      logo: '/ngos/paws-claws.png',
-      website: 'https://pawsclaws.org',
+      name: 'Listening Hearts Foundation',
+      logo: '/ngos/listening-hearts.png',
+      website: 'https://www.instagram.com/listeninghearts_foundation?igsh=eTBldWdpdmYwNDJs',
     },
     {
       name: 'Happy Tails Trust',
-      logo: '/ngos/happy-tails.png',
+      logo: '/ngos/paws-claws.png',
       website: 'https://happytails.org',
     },
     // Add more NGOs as needed

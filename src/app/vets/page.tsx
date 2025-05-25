@@ -41,7 +41,7 @@ export default function VetsPage() {
   const [form, setForm] = useState({ name: '', vetName: '', location: '', contact: '', reason: '' });
   const formRef = useRef<HTMLFormElement>(null);
   // Add filter state
-  const [selectedCity, setSelectedCity] = useState('All Cities');
+  const [selectedCity, setSelectedCity] = useState('All States');
   const [selectedSpecialty, setSelectedSpecialty] = useState('All Specialties');
 
   useEffect(() => {
@@ -63,13 +63,13 @@ export default function VetsPage() {
     loadVets();
   }, []);
 
-  // Extract unique cities from addresses
-  const allCities = Array.from(new Set(vets.map(vet => {
-    // Try to extract city from address (assume city is second-to-last part)
+  // Extract unique states from addresses
+  const allStates = Array.from(new Set(vets.map(vet => {
+    // Try to extract state from address (assume state is second-to-last part)
     const parts = vet.address.split(',').map(s => s.trim());
     return parts.length > 1 ? parts[parts.length - 2] : 'Unknown';
   }))).filter(Boolean);
-  allCities.unshift('All Cities');
+  allStates.unshift('All States');
 
   // Extract unique specialties from services
   const allSpecialties = Array.from(new Set(vets.flatMap(vet => vet.services))).filter(Boolean);
@@ -77,11 +77,11 @@ export default function VetsPage() {
 
   // Filter vets based on selected filters
   const filteredVets = vets.filter(vet => {
-    const city = vet.address.split(',').map(s => s.trim());
-    const vetCity = city.length > 1 ? city[city.length - 2] : 'Unknown';
-    const cityMatch = selectedCity === 'All Cities' || vetCity === selectedCity;
+    const parts = vet.address.split(',').map(s => s.trim());
+    const vetState = parts.length > 1 ? parts[parts.length - 2] : 'Unknown';
+    const stateMatch = selectedCity === 'All States' || vetState === selectedCity;
     const specialtyMatch = selectedSpecialty === 'All Specialties' || vet.services.includes(selectedSpecialty);
-    return cityMatch && specialtyMatch;
+    return stateMatch && specialtyMatch;
   });
 
   const totalPages = Math.ceil(filteredVets.length / ITEMS_PER_PAGE);
@@ -139,15 +139,15 @@ export default function VetsPage() {
         <div className="mt-16">
           <div className="rounded-xl bg-gray-50 p-6">
             <div className="mb-4">
-              <div className="mb-2 font-semibold text-gray-700">Filter by City</div>
+              <div className="mb-2 font-semibold text-gray-700">Filter by State</div>
               <div className="flex gap-2 overflow-x-auto pb-2">
-                {allCities.map(city => (
+                {allStates.map(state => (
                   <button
-                    key={city}
-                    onClick={() => { setSelectedCity(city); setCurrentPage(1); }}
-                    className={`rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap border transition-colors ${selectedCity === city ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-900 border-gray-200 hover:bg-indigo-50'}`}
+                    key={state}
+                    onClick={() => { setSelectedCity(state); setCurrentPage(1); }}
+                    className={`rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap border transition-colors ${selectedCity === state ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-900 border-gray-200 hover:bg-indigo-50'}`}
                   >
-                    {city}
+                    {state}
                   </button>
                 ))}
               </div>

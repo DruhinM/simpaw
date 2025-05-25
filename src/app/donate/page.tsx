@@ -112,10 +112,10 @@ export default function DonatePage() {
       website: 'https://pawsclaws.org',
     },
     {
-      name: 'Happy Tails Trust',
-      logo: '/ngos/happy-tails.png',
-      description: 'Focused on animal rescue, adoption, and community education for responsible pet ownership.',
-      website: 'https://happytails.org',
+      name: 'Listening Hearts Foundation',
+      logo: '/ngos/listening-hearts.png',
+      description: 'Providing shelter, food, and medical care to stray and abandoned animals across the city.',
+      website: 'https://www.instagram.com/listeninghearts_foundation?igsh=eTBldWdpdmYwNDJs',
     },
     // Add more NGOs as needed
   ];
