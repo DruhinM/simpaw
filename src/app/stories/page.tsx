@@ -29,6 +29,7 @@ interface Story {
   fullStory?: string;
   preview?: string;
   likes?: number;
+  featured?: boolean;
 }
 
 const ITEMS_PER_PAGE = 4;
@@ -41,6 +42,7 @@ export default function StoriesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', title: '', story: '', imageUrl: '' });
   const formRef = useRef<HTMLFormElement>(null);
+  const [selectedStory, setSelectedStory] = useState<Story | null>(null);
 
   useEffect(() => {
     async function loadStories() {
@@ -48,8 +50,12 @@ export default function StoriesPage() {
         const data = await fetchSheetData('Stories');
         // Skip header row and transform data
         const transformedStories = data.slice(1).map(transformStoryData);
-        // Sort by date, most recent first
-        transformedStories.sort((a: Story, b: Story) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        // Sort: featured first (by date desc), then non-featured (by date desc)
+        transformedStories.sort((a: Story, b: Story) => {
+          if (a.featured && !b.featured) return -1;
+          if (!a.featured && b.featured) return 1;
+          return new Date(b.date).getTime() - new Date(a.date).getTime();
+        });
         setStories(transformedStories);
       } catch (err: any) {
         setError(err.message);
@@ -132,12 +138,19 @@ export default function StoriesPage() {
         {/* Modern Card Grid for Stories */}
         <div className="mx-auto mt-16 grid max-w-5xl grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {currentStories.map((story) => (
-            <article key={story.id} className="flex flex-col bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow p-0 overflow-hidden border border-gray-100">
+            <article
+              key={story.id}
+              className={`flex flex-col bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow p-0 overflow-hidden border border-gray-100 cursor-pointer relative ${story.featured ? 'ring-2 ring-pink-400 bg-pink-50' : ''}`}
+              onClick={() => setSelectedStory(story)}
+            >
               <div className="relative h-48 w-full">
                 <Image src={story.imageUrl} alt={story.title} fill className="object-cover" />
                 <span className="absolute top-4 left-4 inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-xs font-medium text-indigo-700 z-10">
                   {story.category}
                 </span>
+                {story.featured && (
+                  <span className="absolute top-4 right-4 bg-pink-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow z-10">Featured</span>
+                )}
               </div>
               <div className="flex-1 flex flex-col p-6">
                 <div className="flex items-center gap-x-3 text-xs mb-2">
@@ -153,7 +166,7 @@ export default function StoriesPage() {
                   <span className="text-gray-600">{story.author}</span>
                 </div>
                 <h3 className="text-lg font-semibold leading-6 text-gray-900 mb-2">{story.title}</h3>
-                <p className="text-gray-700 text-sm leading-6 flex-1 mb-4 line-clamp-4">{story.fullStory || story.preview}</p>
+                <p className="text-gray-700 text-sm leading-6 flex-1 mb-4 line-clamp-4">{story.preview}</p>
                 <div className="flex items-center justify-between mt-auto">
                   <div className="flex gap-4">
                     <button className="flex items-center gap-1 text-gray-500 hover:text-indigo-600 text-xs">
@@ -229,6 +242,38 @@ export default function StoriesPage() {
               </div>
             </form>
           </div>
+        </div>
+      </Dialog>
+      {/* Story Modal */}
+      <Dialog open={!!selectedStory} onClose={() => setSelectedStory(null)} className="fixed z-50 inset-0 overflow-y-auto">
+        <div className="flex items-center justify-center min-h-screen px-4">
+          <div aria-hidden className="fixed inset-0 bg-black opacity-30" />
+          {selectedStory && (
+            <div className="relative bg-white rounded-lg max-w-2xl w-full mx-auto p-8 z-10">
+              <Dialog.Title className="text-2xl font-bold mb-2">{selectedStory.title}</Dialog.Title>
+              <div className="flex items-center gap-x-3 text-xs mb-4">
+                <CalendarIcon className="h-4 w-4 text-gray-400" />
+                <time dateTime={selectedStory.date} className="text-gray-500">
+                  {new Date(selectedStory.date).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </time>
+                <UserCircleIcon className="h-4 w-4 text-gray-400 ml-4" />
+                <span className="text-gray-600">{selectedStory.author}</span>
+              </div>
+              <div className="relative w-full h-64 mb-4">
+                <Image src={selectedStory.imageUrl} alt={selectedStory.title} fill className="object-cover rounded-lg" />
+              </div>
+              <div className="text-gray-800 text-base whitespace-pre-line mb-4">
+                {selectedStory.fullStory || selectedStory.preview}
+              </div>
+              <div className="flex justify-end">
+                <button className="px-4 py-2 rounded bg-indigo-600 text-white" onClick={() => setSelectedStory(null)}>Close</button>
+              </div>
+            </div>
+          )}
         </div>
       </Dialog>
     </div>
