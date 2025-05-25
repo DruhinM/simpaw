@@ -1,3 +1,6 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { 
   CalendarIcon, 
@@ -7,37 +10,52 @@ import {
   ShareIcon,
   BookmarkIcon
 } from '@heroicons/react/24/outline';
+import { fetchSheetData } from '@/lib/data';
+import { transformStoryData } from '@/lib/data';
+import { Spinner } from '@/components/Spinner';
+
+interface Story {
+  id: string;
+  title: string;
+  author: string;
+  content: string;
+  createdAt: string;
+  imageUrl: string;
+}
 
 export default function StoriesPage() {
-  const stories = [
-    {
-      title: "Max's Journey to Recovery",
-      author: "Sarah Johnson",
-      preview: "When we found Max, he was scared and injured. Today, he's the happiest dog you'll ever meet.",
-      date: "May 15, 2024",
-      likes: 234,
-      comments: 45,
-      image: "https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=800&h=600&fit=crop"
-    },
-    {
-      title: "Luna's Adoption Story",
-      author: "Mike Peters",
-      preview: "After months at the shelter, Luna finally found her forever home with us.",
-      date: "May 12, 2024",
-      likes: 189,
-      comments: 32,
-      image: "https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?w=800&h=600&fit=crop"
-    },
-    {
-      title: "Training Success with Charlie",
-      author: "Emma Wilson",
-      preview: "From an energetic puppy to a well-behaved companion - our training journey.",
-      date: "May 10, 2024",
-      likes: 156,
-      comments: 28,
-      image: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&h=600&fit=crop"
+  const [stories, setStories] = useState<Story[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadStories() {
+      try {
+        const data = await fetchSheetData('Stories');
+        // Skip header row and transform data
+        const transformedStories = data.slice(1).map(transformStoryData);
+        setStories(transformedStories);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     }
-  ];
+
+    loadStories();
+  }, []);
+
+  if (loading) {
+    return <Spinner />;
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-500">Error loading stories: {error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-24 pb-16">
@@ -49,44 +67,51 @@ export default function StoriesPage() {
           </p>
         </div>
 
-        {/* Featured Story */}
-        <div className="mt-16 overflow-hidden bg-white rounded-xl shadow-lg">
-          <div className="grid grid-cols-1 lg:grid-cols-2">
-            <div className="relative h-64 lg:h-auto">
-              <div className="absolute inset-0 bg-indigo-600 mix-blend-multiply opacity-20" />
-              <div className="h-full w-full bg-gray-100" />
-            </div>
-            <div className="px-6 py-8 lg:px-8">
-              <div className="flex items-center gap-x-4">
-                <time dateTime="2024-05-20" className="text-sm text-gray-500">
-                  May 20, 2024
-                </time>
-                <span className="inline-flex items-center rounded-full bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700">
-                  Featured
-                </span>
+        {/* Featured Story - Using first story as featured */}
+        {stories.length > 0 && (
+          <div className="mt-16 overflow-hidden bg-white rounded-xl shadow-lg">
+            <div className="grid grid-cols-1 lg:grid-cols-2">
+              <div className="relative h-64 lg:h-auto">
+                <Image
+                  src={stories[0].imageUrl}
+                  alt={stories[0].title}
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-indigo-600 mix-blend-multiply opacity-20" />
               </div>
-              <h2 className="mt-4 text-2xl font-bold text-gray-900">Bella's Incredible Recovery Story</h2>
-              <p className="mt-4 text-gray-600">
-                From a critical injury to winning agility competitions - follow Bella's inspiring journey of resilience and determination.
-              </p>
-              <div className="mt-6 flex items-center gap-x-4">
-                <UserCircleIcon className="h-10 w-10 text-gray-400" />
-                <div>
-                  <p className="font-semibold text-gray-900">Dr. James Carter</p>
-                  <p className="text-sm text-gray-600">Veterinarian & Pet Parent</p>
+              <div className="px-6 py-8 lg:px-8">
+                <div className="flex items-center gap-x-4">
+                  <time dateTime={stories[0].createdAt} className="text-sm text-gray-500">
+                    {new Date(stories[0].createdAt).toLocaleDateString()}
+                  </time>
+                  <span className="inline-flex items-center rounded-full bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700">
+                    Featured
+                  </span>
+                </div>
+                <h2 className="mt-4 text-2xl font-bold text-gray-900">{stories[0].title}</h2>
+                <p className="mt-4 text-gray-600">{stories[0].content}</p>
+                <div className="mt-6 flex items-center gap-x-4">
+                  <UserCircleIcon className="h-10 w-10 text-gray-400" />
+                  <div>
+                    <p className="font-semibold text-gray-900">{stories[0].author}</p>
+                    <p className="text-sm text-gray-600">Pet Parent</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
 
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-12">
-          {stories.map((story, index) => (
-            <article key={index} className="flex flex-col bg-white rounded-xl shadow-sm p-6">
+          {stories.slice(1).map((story) => (
+            <article key={story.id} className="flex flex-col bg-white rounded-xl shadow-sm p-6">
               <div className="flex items-center gap-x-4 text-xs">
                 <div className="flex items-center gap-2">
                   <CalendarIcon className="h-4 w-4 text-gray-400" />
-                  <time dateTime={story.date} className="text-gray-500">{story.date}</time>
+                  <time dateTime={story.createdAt} className="text-gray-500">
+                    {new Date(story.createdAt).toLocaleDateString()}
+                  </time>
                 </div>
                 <div className="flex items-center gap-2">
                   <UserCircleIcon className="h-4 w-4 text-gray-400" />
@@ -98,18 +123,18 @@ export default function StoriesPage() {
                   {story.title}
                 </h3>
                 <p className="mt-3 line-clamp-3 text-sm leading-6 text-gray-600">
-                  {story.preview}
+                  {story.content}
                 </p>
               </div>
               <div className="mt-6 flex items-center justify-between">
                 <div className="flex gap-6">
                   <button className="flex items-center gap-2 text-gray-600 hover:text-indigo-600">
                     <HeartIcon className="h-5 w-5" />
-                    <span>{story.likes}</span>
+                    <span>0</span>
                   </button>
                   <button className="flex items-center gap-2 text-gray-600 hover:text-indigo-600">
                     <ChatBubbleLeftIcon className="h-5 w-5" />
-                    <span>{story.comments}</span>
+                    <span>0</span>
                   </button>
                 </div>
                 <div className="flex gap-4">

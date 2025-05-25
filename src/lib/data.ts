@@ -1,0 +1,136 @@
+// Fetch data from API
+export async function fetchSheetData(sheet: string) {
+  const response = await fetch(`/api/data?sheet=${sheet}`);
+  const data = await response.json();
+  
+  if (!data.success) {
+    throw new Error(data.error);
+  }
+  
+  return data.data;
+}
+
+// Add data to sheet
+export async function addSheetData(sheet: string, data: any[]) {
+  const response = await fetch('/api/data', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ sheet, data }),
+  });
+  
+  const result = await response.json();
+  
+  if (!result.success) {
+    throw new Error(result.error);
+  }
+  
+  return result;
+}
+
+// Default image URL to use when no image is provided
+const DEFAULT_IMAGE_URL = 'https://images.unsplash.com/photo-1550697851-920b181d8ca8?w=800&h=600&fit=crop';
+
+// Transform data for different content types
+export function transformTipData(tip: any) {
+  return {
+    id: tip[0] || String(Date.now()),
+    title: tip[1] || '',
+    category: tip[2] || 'General',
+    content: tip[3] || '',
+    imageUrl: tip[4] || DEFAULT_IMAGE_URL,
+    createdAt: tip[5] || new Date().toISOString(),
+    petType: tip[6] || 'All Pets',
+    difficulty: tip[7] || 'Beginner',
+    author: tip[8] || '',
+    duration: tip[9] || '5 minutes',
+    requirements: tip[10] || '',
+    frequency: tip[11] || 'As needed',
+    priority: tip[12] || 'Medium',
+    featured: tip[13] === 'Yes'
+  };
+}
+
+export function transformStoryData(story: any) {
+  return {
+    id: story[0] || String(Date.now()),
+    title: story[1] || '',
+    author: story[2] || '',
+    preview: story[3] || '',
+    date: story[4] || new Date().toISOString(),
+    imageUrl: story[5] || DEFAULT_IMAGE_URL,
+    category: story[6] || 'General',
+    petType: story[7] || '',
+    petName: story[8] || '',
+    petAge: story[9] || '',
+    breed: story[10] || '',
+    source: story[11] || '',
+    likes: parseInt(story[12]) || 0,
+    featured: story[13] === 'Yes',
+    fullStory: story[14] || ''
+  };
+}
+
+export function transformVetData(vet: any) {
+  return {
+    id: vet[0] || String(Date.now()),
+    name: vet[1] || '',
+    address: vet[2] || '',
+    phone: vet[3] || '',
+    email: vet[4] || '',
+    services: vet[5] ? vet[5].split(',').map((s: string) => s.trim()) : [],
+    rating: parseFloat(vet[6]) || 0,
+    imageUrl: vet[7] || DEFAULT_IMAGE_URL,
+    hours: vet[8] || '',
+    emergency: vet[9] === 'Yes',
+    animals: vet[10] ? vet[10].split(',').map((a: string) => a.trim()) : [],
+    languages: vet[11] ? vet[11].split(',').map((l: string) => l.trim()) : [],
+    insurance: vet[12] || '',
+    staff: vet[13] ? vet[13].split(',').map((s: string) => s.trim()) : [],
+    specialization: vet[14] || '',
+    experience: vet[15] || ''
+  };
+}
+
+export function transformPlaceData(place: any) {
+  return {
+    id: place[0] || String(Date.now()),
+    name: place[1] || '',
+    type: place[2] || '',
+    address: place[3] || '',
+    features: place[4] ? place[4].split(',').map((f: string) => f.trim()) : [],
+    rating: parseFloat(place[5]) || 0,
+    description: place[6] || '',
+    imageUrl: place[7] || DEFAULT_IMAGE_URL,
+    hours: place[8] || '',
+    petFriendly: place[9] === 'Yes',
+    restrictions: place[10] || '',
+    size: place[11] || '',
+    amenities: place[12] ? place[12].split(',').map((a: string) => a.trim()) : [],
+    events: place[13] || '',
+    parking: place[14] || '',
+    established: place[15] || ''
+  };
+}
+
+// Add transformation function for donations
+export function transformDonationData(donation: any) {
+  return {
+    id: donation[0] || String(Date.now()),
+    name: donation[1] || '',
+    email: donation[2] || '',
+    amount: parseInt(donation[3]) || 0,
+    tier: donation[4] || '',
+    status: donation[5] || '',
+    date: donation[6] || new Date().toISOString(),
+    frequency: donation[7] || 'One-time',
+    paymentMethod: donation[8] || '',
+    fund: donation[9] || 'General Fund',
+    recurringDonor: donation[10] === 'Yes',
+    notes: donation[11] || '',
+    communication: donation[12] || '',
+    anonymity: donation[13] || '',
+    receipt: donation[14] || ''
+  };
+} 

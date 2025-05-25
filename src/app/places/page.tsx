@@ -1,81 +1,75 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import { 
   MapPinIcon, 
   StarIcon, 
   HeartIcon,
-  PhotoIcon,
   ClockIcon,
-  PhoneIcon,
-  GlobeAltIcon,
   BuildingStorefrontIcon,
   UserGroupIcon,
-  MapIcon
+  MapIcon,
+  CheckCircleIcon
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
+import { fetchSheetData, transformPlaceData } from '@/lib/data';
+import { Spinner } from '@/components/Spinner';
+
+const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1550697851-920b181d8ca8?w=800&h=600&fit=crop';
 
 export default function PlacesPage() {
-  const stats = [
-    { name: 'Pet-Friendly Locations', value: '1,000+', icon: BuildingStorefrontIcon },
-    { name: 'Happy Visitors', value: '100,000+', icon: UserGroupIcon },
-    { name: 'Cities Covered', value: '50+', icon: MapIcon },
-  ];
+  const [places, setPlaces] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState("All Places");
 
-  const places = [
-    {
-      name: "Central Park Cafe",
-      type: "Restaurant",
-      address: "123 Park Avenue, City",
-      features: ["Outdoor Seating", "Water Bowls", "Pet Menu"],
-      rating: 4.5,
-      reviews: 234,
-      description: "A cozy cafe with a dedicated pet menu and spacious outdoor seating area.",
-      image: "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=800&h=600&fit=crop",
-      hours: "8AM - 10PM",
-      phone: "(555) 123-4567",
-      website: "www.centralpawscafe.com",
-      photos: 45,
-      likes: 156
-    },
-    {
-      name: "Pawsome Pet Park",
-      type: "Park",
-      address: "456 Recreation Road, City",
-      features: ["Fenced Area", "Water Fountains", "Agility Equipment"],
-      rating: 4.8,
-      reviews: 567,
-      description: "Large off-leash dog park with separate areas for small and large dogs.",
-      image: "https://images.unsplash.com/photo-1601758174114-e711c0cbaa69?w=800&h=600&fit=crop",
-      hours: "6AM - 9PM",
-      phone: "(555) 234-5678",
-      website: "www.pawsomepark.com",
-      photos: 89,
-      likes: 324
-    },
-    {
-      name: "The Friendly Hotel",
-      type: "Hotel",
-      address: "789 Comfort Lane, City",
-      features: ["Pet Beds", "Walking Service", "Pet Sitting"],
-      rating: 4.6,
-      reviews: 345,
-      description: "Luxury hotel that welcomes pets with special amenities and services.",
-      image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop",
-      hours: "24/7",
-      phone: "(555) 345-6789",
-      website: "www.friendlyhotel.com",
-      photos: 67,
-      likes: 245
+  useEffect(() => {
+    async function loadPlaces() {
+      try {
+        const data = await fetchSheetData('Places');
+        // Skip header row and transform data using the transformer
+        const transformedPlaces = data.slice(1).map(transformPlaceData);
+        setPlaces(transformedPlaces);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     }
+
+    loadPlaces();
+  }, []);
+
+  const stats = [
+    { name: 'Pet-Friendly Locations', value: places.length, icon: BuildingStorefrontIcon },
+    { name: 'Happy Visitors', value: '1,000+', icon: UserGroupIcon },
+    { name: 'Cities Covered', value: '10+', icon: MapIcon },
   ];
 
   const categories = [
     "All Places",
-    "Restaurants",
-    "Parks",
-    "Hotels",
-    "Cafes",
-    "Groomers",
-    "Pet Stores"
+    "Pet-Friendly Cafe",
+    "Dog Park",
+    "Pet-Friendly Hotel",
+    "Pet Store",
+    "Pet-Friendly Restaurant"
   ];
+
+  const filteredPlaces = selectedCategory === "All Places" 
+    ? places 
+    : places.filter(place => place.type === selectedCategory);
+
+  if (loading) {
+    return <Spinner />;
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-500">Error loading places: {error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-24 pb-16">
@@ -103,11 +97,12 @@ export default function PlacesPage() {
         {/* Category Filter */}
         <div className="mt-16">
           <div className="flex gap-4 overflow-x-auto pb-4">
-            {categories.map((category, index) => (
+            {categories.map((category) => (
               <button
-                key={index}
+                key={category}
+                onClick={() => setSelectedCategory(category)}
                 className={`rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap ${
-                  index === 0
+                  category === selectedCategory
                     ? 'bg-indigo-600 text-white'
                     : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
                 }`}
@@ -119,18 +114,23 @@ export default function PlacesPage() {
         </div>
 
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-12 lg:mx-0 lg:max-w-none lg:grid-cols-2">
-          {places.map((place, index) => (
-            <div key={index} className="bg-white overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-shadow">
+          {filteredPlaces.map((place) => (
+            <div key={place.id} className="bg-white overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-shadow">
               <div className="relative h-48">
                 <Image
-                  src={place.image}
+                  src={place.imageUrl || DEFAULT_IMAGE}
                   alt={place.name}
                   fill
                   className="object-cover"
+                  onError={(e: any) => {
+                    e.target.src = DEFAULT_IMAGE;
+                  }}
                 />
-                <button className="absolute top-4 right-4 p-2 rounded-full bg-white/80 hover:bg-white">
-                  <HeartIcon className="h-5 w-5 text-red-500" />
-                </button>
+                {place.petFriendly && (
+                  <div className="absolute top-4 right-4 p-2 rounded-full bg-green-500/90">
+                    <CheckCircleIcon className="h-5 w-5 text-white" />
+                  </div>
+                )}
               </div>
               <div className="p-6">
                 <div className="flex justify-between items-start">
@@ -141,7 +141,6 @@ export default function PlacesPage() {
                   <div className="flex items-center gap-x-1">
                     <StarIcon className="h-5 w-5 text-yellow-400" />
                     <span className="text-sm font-medium text-gray-900">{place.rating}</span>
-                    <span className="text-sm text-gray-500">({place.reviews})</span>
                   </div>
                 </div>
 
@@ -156,20 +155,12 @@ export default function PlacesPage() {
                     <ClockIcon className="h-5 w-5 text-gray-400" />
                     <span className="text-sm text-gray-600">{place.hours}</span>
                   </div>
-                  <div className="flex items-center gap-x-3">
-                    <PhoneIcon className="h-5 w-5 text-gray-400" />
-                    <span className="text-sm text-gray-600">{place.phone}</span>
-                  </div>
-                  <div className="flex items-center gap-x-3">
-                    <GlobeAltIcon className="h-5 w-5 text-gray-400" />
-                    <span className="text-sm text-gray-600">{place.website}</span>
-                  </div>
                 </div>
 
                 <div className="mt-4">
                   <h4 className="text-sm font-medium text-gray-900">Features</h4>
                   <div className="mt-2 flex flex-wrap gap-2">
-                    {place.features.map((feature, i) => (
+                    {place.features.map((feature: string, i: number) => (
                       <span
                         key={i}
                         className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700"
@@ -180,16 +171,30 @@ export default function PlacesPage() {
                   </div>
                 </div>
 
+                <div className="mt-4">
+                  <h4 className="text-sm font-medium text-gray-900">Amenities</h4>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {place.amenities.map((amenity: string, i: number) => (
+                      <span
+                        key={i}
+                        className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700"
+                      >
+                        {amenity}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {place.events && (
+                  <div className="mt-4">
+                    <h4 className="text-sm font-medium text-gray-900">Events</h4>
+                    <p className="mt-1 text-sm text-gray-600">{place.events}</p>
+                  </div>
+                )}
+
                 <div className="mt-6 flex items-center justify-between">
-                  <div className="flex gap-4">
-                    <div className="flex items-center gap-x-1">
-                      <HeartIcon className="h-5 w-5 text-gray-400" />
-                      <span className="text-sm text-gray-600">{place.likes}</span>
-                    </div>
-                    <div className="flex items-center gap-x-1">
-                      <PhotoIcon className="h-5 w-5 text-gray-400" />
-                      <span className="text-sm text-gray-600">{place.photos}</span>
-                    </div>
+                  <div className="text-sm text-gray-500">
+                    Established {place.established}
                   </div>
                   <button className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">
                     View Details

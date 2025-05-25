@@ -5,32 +5,46 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const sheet = searchParams.get('sheet');
-
+    
     if (!sheet) {
-      return NextResponse.json({ error: 'Sheet parameter is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Sheet parameter is required' },
+        { status: 400 }
+      );
     }
 
-    const data = await getSheetData(`${sheet}!A2:Z`);
-    return NextResponse.json({ data });
-  } catch (error) {
+    const range = `${sheet}!A1:P`;
+    const data = await getSheetData(range);
+    
+    return NextResponse.json({ success: true, data });
+  } catch (error: any) {
     console.error('Error fetching data:', error);
-    return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch data', details: error.message },
+      { status: 500 }
+    );
   }
 }
 
 export async function POST(request: Request) {
   try {
-    const { sheet, values } = await request.json();
-
-    if (!sheet || !values) {
-      return NextResponse.json({ error: 'Sheet and values are required' }, { status: 400 });
+    const { sheet, data } = await request.json();
+    
+    if (!sheet || !data) {
+      return NextResponse.json(
+        { error: 'Sheet and data parameters are required' },
+        { status: 400 }
+      );
     }
 
-    const result = await appendSheetData(`${sheet}!A2:Z`, [values]);
-    return NextResponse.json({ result });
-  } catch (error) {
+    const result = await appendSheetData(sheet, [data]);
+    return NextResponse.json({ success: true, result });
+  } catch (error: any) {
     console.error('Error adding data:', error);
-    return NextResponse.json({ error: 'Failed to add data' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to add data', details: error.message },
+      { status: 500 }
+    );
   }
 }
 

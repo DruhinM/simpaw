@@ -1,73 +1,72 @@
 import { google } from 'googleapis';
-import { JWT } from 'google-auth-library';
 
-// These will come from environment variables
-const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
-const SHEET_ID = process.env.GOOGLE_SHEET_ID;
+// Initialize auth
+const auth = new google.auth.GoogleAuth({
+  credentials: {
+    client_email: process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
+    private_key: process.env.GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+  },
+  scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+});
 
-async function getAuthToken() {
-  const auth = new JWT({
-    email: process.env.GOOGLE_CLIENT_EMAIL,
-    key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    scopes: SCOPES,
+// Initialize sheets
+export async function getSheets() {
+  const client = await auth.getClient();
+  return google.sheets({ 
+    version: 'v4', 
+    auth: client as any // Type assertion needed due to complex auth types
   });
-
-  return auth;
 }
 
-async function getSheets() {
-  const auth = await getAuthToken();
-  return google.sheets({ version: 'v4', auth });
-}
-
+// Get data from sheet
 export async function getSheetData(range: string) {
   const sheets = await getSheets();
   const response = await sheets.spreadsheets.values.get({
-    spreadsheetId: SHEET_ID,
+    spreadsheetId: process.env.SHEET_ID,
     range,
   });
-
   return response.data.values;
 }
 
-export async function updateSheetData(range: string, values: any[][]) {
-  const sheets = await getSheets();
-  const response = await sheets.spreadsheets.values.update({
-    spreadsheetId: SHEET_ID,
-    range,
-    valueInputOption: 'USER_ENTERED',
-    requestBody: {
-      values,
-    },
-  });
-
-  return response.data;
-}
-
+// Append data to sheet
 export async function appendSheetData(range: string, values: any[][]) {
   const sheets = await getSheets();
   const response = await sheets.spreadsheets.values.append({
-    spreadsheetId: SHEET_ID,
+    spreadsheetId: process.env.SHEET_ID,
     range,
     valueInputOption: 'USER_ENTERED',
     requestBody: {
       values,
     },
   });
-
   return response.data;
 }
 
+// Update data in sheet
+export async function updateSheetData(range: string, values: any[][]) {
+  const sheets = await getSheets();
+  const response = await sheets.spreadsheets.values.update({
+    spreadsheetId: process.env.SHEET_ID,
+    range,
+    valueInputOption: 'USER_ENTERED',
+    requestBody: {
+      values,
+    },
+  });
+  return response.data;
+}
+
+// Delete row from sheet
 export async function deleteSheetRow(sheetName: string, rowIndex: number) {
   const sheets = await getSheets();
   const response = await sheets.spreadsheets.batchUpdate({
-    spreadsheetId: SHEET_ID,
+    spreadsheetId: process.env.SHEET_ID,
     requestBody: {
       requests: [
         {
           deleteDimension: {
             range: {
-              sheetId: 0, // You might need to get the correct sheet ID
+              sheetId: getSheetId(sheetName),
               dimension: 'ROWS',
               startIndex: rowIndex - 1,
               endIndex: rowIndex,
@@ -77,6 +76,19 @@ export async function deleteSheetRow(sheetName: string, rowIndex: number) {
       ],
     },
   });
-
   return response.data;
+}
+
+// Helper function to get sheet ID
+function getSheetId(sheetName: string) {
+  // You'll need to manually map sheet names to their IDs
+  // You can get these IDs from the Google Sheets URL
+  const sheetIds: { [key: string]: number } = {
+    'Tips': 0,
+    'Stories': 1,
+    'Vets': 2,
+    'Places': 3,
+    'Donations': 4,
+  };
+  return sheetIds[sheetName];
 } 

@@ -9,8 +9,7 @@ const navigation = [
   { name: 'Tips & Tricks', href: '/tips' },
   { name: 'Pet Stories', href: '/stories' },
   { name: 'Find a Vet', href: '/vets' },
-  { name: 'Pet-Friendly Places', href: '/places' },
-  { name: 'Donate', href: '/donate' }
+  { name: 'Pet-Friendly Places', href: '/places' }
 ];
 
 export default function Navbar() {

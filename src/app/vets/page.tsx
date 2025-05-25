@@ -1,7 +1,10 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import { 
   MapPinIcon, 
   PhoneIcon, 
-  ClockIcon,
+  EnvelopeIcon,
   StarIcon,
   UserGroupIcon,
   BuildingOffice2Icon,
@@ -10,49 +13,59 @@ import {
   CalendarIcon
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
+import { fetchSheetData, transformVetData } from '@/lib/data';
+import { Spinner } from '@/components/Spinner';
+
+interface Vet {
+  id: string;
+  name: string;
+  address: string;
+  phone: string;
+  email: string;
+  services: string[];
+  rating: number;
+  imageUrl: string;
+}
 
 export default function VetsPage() {
+  const [vets, setVets] = useState<Vet[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadVets() {
+      try {
+        const data = await fetchSheetData('Vets');
+        // Skip header row and transform data
+        const transformedVets = data.slice(1).map(transformVetData);
+        setVets(transformedVets);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadVets();
+  }, []);
+
   const stats = [
     { name: 'Verified Clinics', value: '500+', icon: BuildingOffice2Icon },
     { name: 'Pet Parents Served', value: '50,000+', icon: UserGroupIcon },
     { name: 'Expert Veterinarians', value: '1,000+', icon: AcademicCapIcon },
   ];
 
-  const vets = [
-    {
-      name: "Central Pet Clinic",
-      address: "123 Pet Care Lane, City",
-      phone: "(555) 123-4567",
-      hours: "Mon-Sat: 9AM-6PM",
-      specialties: ["General Care", "Surgery", "Dental"],
-      rating: 4.8,
-      reviews: 128,
-      image: "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=800&h=600&fit=crop",
-      nextAvailable: "Today"
-    },
-    {
-      name: "Happy Paws Veterinary",
-      address: "456 Animal Avenue, City",
-      phone: "(555) 234-5678",
-      hours: "Mon-Sun: 8AM-8PM",
-      specialties: ["Emergency Care", "Exotic Pets", "Vaccination"],
-      rating: 4.9,
-      reviews: 256,
-      image: "https://images.unsplash.com/photo-1516734212186-65266f08a5e4?w=800&h=600&fit=crop",
-      nextAvailable: "Tomorrow"
-    },
-    {
-      name: "Caring Vets Center",
-      address: "789 Health Street, City",
-      phone: "(555) 345-6789",
-      hours: "Mon-Fri: 10AM-7PM",
-      specialties: ["Preventive Care", "Internal Medicine", "Dermatology"],
-      rating: 4.7,
-      reviews: 189,
-      image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800&h=600&fit=crop",
-      nextAvailable: "In 2 days"
-    }
-  ];
+  if (loading) {
+    return <Spinner />;
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-500">Error loading veterinary clinics: {error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-24 pb-16">
@@ -122,11 +135,11 @@ export default function VetsPage() {
         </div>
 
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-12 lg:mx-0 lg:max-w-none lg:grid-cols-2">
-          {vets.map((vet, index) => (
-            <div key={index} className="bg-white overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-shadow">
+          {vets.map((vet) => (
+            <div key={vet.id} className="bg-white overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-shadow">
               <div className="relative h-48">
                 <Image
-                  src={vet.image}
+                  src={vet.imageUrl}
                   alt={vet.name}
                   fill
                   className="object-cover"
@@ -138,7 +151,6 @@ export default function VetsPage() {
                   <div className="flex items-center gap-x-1">
                     <StarIcon className="h-5 w-5 text-yellow-400" />
                     <span className="text-sm font-medium text-gray-900">{vet.rating}</span>
-                    <span className="text-sm text-gray-500">({vet.reviews})</span>
                   </div>
                 </div>
 
@@ -152,24 +164,20 @@ export default function VetsPage() {
                     <span className="text-sm text-gray-600">{vet.phone}</span>
                   </div>
                   <div className="flex items-center gap-x-3">
-                    <ClockIcon className="h-5 w-5 text-gray-400" />
-                    <span className="text-sm text-gray-600">{vet.hours}</span>
-                  </div>
-                  <div className="flex items-center gap-x-3">
-                    <CalendarIcon className="h-5 w-5 text-gray-400" />
-                    <span className="text-sm text-indigo-600 font-medium">Next Available: {vet.nextAvailable}</span>
+                    <EnvelopeIcon className="h-5 w-5 text-gray-400" />
+                    <span className="text-sm text-gray-600">{vet.email}</span>
                   </div>
                 </div>
 
                 <div className="mt-4">
-                  <h4 className="text-sm font-medium text-gray-900">Specialties</h4>
+                  <h4 className="text-sm font-medium text-gray-900">Services</h4>
                   <div className="mt-2 flex flex-wrap gap-2">
-                    {vet.specialties.map((specialty, i) => (
+                    {vet.services.map((service, i) => (
                       <span
                         key={i}
                         className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700"
                       >
-                        {specialty}
+                        {service}
                       </span>
                     ))}
                   </div>
