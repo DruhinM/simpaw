@@ -1,3 +1,6 @@
+'use client';
+
+import { useEffect } from 'react';
 import {
   HeartIcon,
   GiftIcon,
@@ -9,6 +12,12 @@ import {
   HandRaisedIcon
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
+
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 export default function DonatePage() {
   const stats = [
@@ -82,6 +91,62 @@ export default function DonatePage() {
     }
   ];
 
+  useEffect(() => {
+    // Load Razorpay script
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
+
+  const handleDonation = async (amount: number) => {
+    try {
+      // Create order
+      const response = await fetch('/api/razorpay', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ amount }),
+      });
+
+      const data = await response.json();
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      // Initialize Razorpay payment
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: data.amount,
+        currency: data.currency,
+        name: 'Simpaw',
+        description: 'Donation to help pets in need',
+        order_id: data.orderId,
+        handler: function (response: any) {
+          console.log('Payment successful:', response);
+          // Here you can add code to show success message
+          // and update your backend about successful payment
+        },
+        prefill: {
+          name: '',
+          email: '',
+          contact: ''
+        },
+        theme: {
+          color: '#4F46E5'
+        }
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+    } catch (error) {
+      console.error('Payment error:', error);
+      // Here you can add code to show error message
+    }
+  };
+
   return (
     <div className="pt-24 pb-16">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -153,11 +218,14 @@ export default function DonatePage() {
                     </li>
                   ))}
                 </ul>
-                <button className={`mt-8 w-full rounded-md px-4 py-2.5 text-sm font-semibold shadow-sm ${
-                  tier.popular
-                    ? 'bg-indigo-600 text-white hover:bg-indigo-500'
-                    : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'
-                }`}>
+                <button
+                  onClick={() => handleDonation(parseInt(tier.price.replace(/,/g, '')))}
+                  className={`mt-8 w-full rounded-md px-4 py-2.5 text-sm font-semibold shadow-sm ${
+                    tier.popular
+                      ? 'bg-indigo-600 text-white hover:bg-indigo-500'
+                      : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'
+                  }`}
+                >
                   Donate {tier.name}
                 </button>
               </div>
@@ -173,15 +241,24 @@ export default function DonatePage() {
               Every contribution helps! Choose your own amount and make a difference today.
             </p>
             <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
-              {['₹500', '₹1,000', '₹2,500', '₹5,000'].map((amount) => (
+              {['500', '1000', '2500', '5000'].map((amount) => (
                 <button
                   key={amount}
+                  onClick={() => handleDonation(parseInt(amount))}
                   className="rounded-md bg-white px-6 py-3 text-sm font-semibold text-indigo-600 shadow-sm hover:bg-indigo-50"
                 >
-                  {amount}
+                  ₹{amount}
                 </button>
               ))}
-              <button className="rounded-md bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">
+              <button 
+                onClick={() => {
+                  const amount = prompt('Enter donation amount in INR:');
+                  if (amount && !isNaN(parseInt(amount))) {
+                    handleDonation(parseInt(amount));
+                  }
+                }}
+                className="rounded-md bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
+              >
                 Custom Amount
               </button>
             </div>
