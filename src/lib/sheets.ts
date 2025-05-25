@@ -1,7 +1,9 @@
 import { google } from 'googleapis';
+import { GoogleAuth } from 'google-auth-library';
+import { SheetData } from '@/types';
 
 // Initialize auth
-const auth = new google.auth.GoogleAuth({
+const auth = new GoogleAuth({
   credentials: {
     client_email: process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
     private_key: process.env.GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, '\n'),
@@ -14,22 +16,25 @@ export async function getSheets() {
   const client = await auth.getClient();
   return google.sheets({ 
     version: 'v4', 
-    auth: client as any // Type assertion needed due to complex auth types
+    auth: client 
   });
 }
 
 // Get data from sheet
-export async function getSheetData(range: string) {
+export async function getSheetData(range: string): Promise<SheetData> {
   const sheets = await getSheets();
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId: process.env.SHEET_ID,
     range,
   });
-  return response.data.values;
+
+  return {
+    data: response.data.values || [],
+  };
 }
 
 // Append data to sheet
-export async function appendSheetData(range: string, values: any[][]) {
+export async function appendSheetData(range: string, values: (string | number | boolean)[][]) {
   const sheets = await getSheets();
   const response = await sheets.spreadsheets.values.append({
     spreadsheetId: process.env.SHEET_ID,
@@ -39,6 +44,7 @@ export async function appendSheetData(range: string, values: any[][]) {
       values,
     },
   });
+
   return response.data;
 }
 

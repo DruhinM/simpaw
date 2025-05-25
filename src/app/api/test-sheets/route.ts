@@ -3,13 +3,20 @@ import { getSheetData, appendSheetData } from '@/lib/sheets';
 
 export async function GET() {
   try {
-    // Try to read data from Tips sheet
-    const data = await getSheetData('Tips!A1:F1');
+    const data = await getSheetData('Tips!A1:Z1000');
     return NextResponse.json({ success: true, data });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Sheets test error:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch data', details: error.message },
+      { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        env: {
+          hasSheetId: !!process.env.SHEET_ID,
+          hasClientEmail: !!process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
+          hasPrivateKey: !!process.env.GOOGLE_SHEETS_PRIVATE_KEY,
+        }
+      },
       { status: 500 }
     );
   }
