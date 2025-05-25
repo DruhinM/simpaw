@@ -13,14 +13,16 @@ import {
   QrCodeIcon
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
-import { getDonations } from '@/lib/data';
+import { getDonations, getPets } from '@/lib/data';
+import { Spinner } from '@/components/Spinner';
 
 export default function DonatePage() {
-  const stats = [
-    { name: 'Pets Helped', value: '2,500+', icon: HeartIcon },
-    { name: 'Active Donors', value: '1,000+', icon: UserGroupIcon },
-    { name: 'Success Rate', value: '95%', icon: SparklesIcon },
-  ];
+  const [stats, setStats] = useState([
+    { name: 'Pets Helped', value: '—', icon: HeartIcon },
+    { name: 'Active Donors', value: '—', icon: UserGroupIcon },
+    { name: 'Success Rate', value: '—', icon: SparklesIcon },
+  ]);
+  const [loading, setLoading] = useState(true);
 
   const donationTiers = [
     {
@@ -90,6 +92,39 @@ export default function DonatePage() {
   const [contributors, setContributors] = useState<string[]>([]);
 
   useEffect(() => {
+    async function fetchStats() {
+      try {
+        const [pets, donations] = await Promise.all([
+          getPets(),
+          getDonations(),
+        ]);
+        
+        // Calculate unique donors
+        const uniqueDonors = Array.from(new Set(donations.map(d => d.donor)));
+        
+        // Calculate success rate (assuming successful donations have status "Completed")
+        const successfulDonations = donations.filter(d => d.status === 'Completed').length;
+        const successRate = donations.length > 0 
+          ? Math.round((successfulDonations / donations.length) * 100) 
+          : 0;
+
+        setStats([
+          { name: 'Pets Helped', value: `${pets.length}+`, icon: HeartIcon },
+          { name: 'Active Donors', value: `${uniqueDonors.length}+`, icon: UserGroupIcon },
+          { name: 'Success Rate', value: `${successRate}%`, icon: SparklesIcon },
+        ]);
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+        // Keep the default values if there's an error
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchStats();
+  }, []);
+
+  useEffect(() => {
     async function fetchContributors() {
       try {
         const donations = await getDonations();
@@ -133,15 +168,21 @@ export default function DonatePage() {
 
         {/* Stats Section */}
         <div className="mt-16 border-t border-gray-100 pt-10">
-          <dl className="grid grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-3">
-            {stats.map((stat) => (
-              <div key={stat.name} className="flex flex-col items-center gap-y-4">
-                <stat.icon className="h-12 w-12 text-indigo-600" />
-                <dt className="text-base leading-7 text-gray-600">{stat.name}</dt>
-                <dd className="text-3xl font-semibold tracking-tight text-gray-900">{stat.value}</dd>
-              </div>
-            ))}
-          </dl>
+          {loading ? (
+            <div className="flex justify-center">
+              <Spinner />
+            </div>
+          ) : (
+            <dl className="grid grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-3">
+              {stats.map((stat) => (
+                <div key={stat.name} className="flex flex-col items-center gap-y-4">
+                  <stat.icon className="h-12 w-12 text-indigo-600" />
+                  <dt className="text-base leading-7 text-gray-600">{stat.name}</dt>
+                  <dd className="text-3xl font-semibold tracking-tight text-gray-900">{stat.value}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
         </div>
 
         {/* QR Code Payment Section */}

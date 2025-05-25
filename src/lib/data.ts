@@ -267,12 +267,13 @@ export const getPlaces = async (): Promise<Place[]> => {
   }));
 }
 
-export const getDonations = async (): Promise<{ amount: number; date: string; donor: string }[]> => {
+export const getDonations = async (): Promise<{ amount: number; date: string; donor: string; status: string }[]> => {
   const data = await fetchSheetData('Donations');
   // Skip header row
   return data.slice(1).map((donation: SheetRow) => ({
     amount: Number(donation[3]) || 0,
     date: donation[6] || new Date().toISOString(),
-    donor: donation[1] || 'Anonymous'
+    donor: donation[1] || 'Anonymous',
+    status: donation[5] || 'Pending'
   }));
 } 
