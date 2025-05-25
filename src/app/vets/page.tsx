@@ -277,9 +277,14 @@ export default function VetsPage() {
                 </div>
 
                 <div className="mt-6">
-                  <button className="w-full rounded-md bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">
+                  <a
+                    href={`mailto:${vet.email}?subject=Appointment%20Request%20for%20${encodeURIComponent(vet.name)}`}
+                    className="w-full inline-block rounded-md bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 text-center"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     Book Appointment
-                  </button>
+                  </a>
                 </div>
               </div>
             </div>
