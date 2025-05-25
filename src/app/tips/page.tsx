@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { fetchSheetData, transformTipData } from '@/lib/data';
 import { Spinner } from '@/components/Spinner';
 import { Pagination } from '@/components/Pagination';
@@ -11,6 +11,7 @@ import {
   StarIcon,
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
+import { Dialog } from '@headlessui/react';
 
 interface Tip {
   id: string;
@@ -29,6 +30,9 @@ export default function TipsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [form, setForm] = useState({ name: '', email: '', tip: '', category: '', imageUrl: '' });
+  const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     async function loadTips() {
@@ -138,23 +142,50 @@ export default function TipsPage() {
             </dl>
           </div>
 
-          {/* Additional Resources */}
-          <div className="mt-16 rounded-2xl bg-gray-50 py-10 px-6 sm:py-16 sm:px-12 lg:px-16">
+          {/* Submit Your Tip Section */}
+          <div className="mt-16 rounded-2xl bg-indigo-50 py-10 px-6 sm:py-16 sm:px-12 lg:px-16">
             <div className="mx-auto max-w-2xl text-center">
-              <h2 className="text-2xl font-bold tracking-tight text-gray-900">Want more detailed guidance?</h2>
-              <p className="mt-4 text-lg leading-6 text-gray-600">
-                Check out our comprehensive guides and connect with expert pet trainers.
+              <h2 className="text-2xl font-bold tracking-tight text-indigo-900">Have a tip to share?</h2>
+              <p className="mt-4 text-lg leading-6 text-indigo-700">
+                Help other pet parents by sharing your best tips and tricks!
               </p>
-              <div className="mt-6 flex items-center justify-center gap-x-6">
-                <button className="rounded-md bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">
-                  View Guides
-                </button>
-                <button className="text-sm font-semibold leading-6 text-gray-900">
-                  Find Trainers <span aria-hidden="true">→</span>
+              <div className="mt-6">
+                <button
+                  className="rounded-md bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  Submit Your Tip
                 </button>
               </div>
             </div>
           </div>
+
+          {/* Modal for tip submission */}
+          <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} className="fixed z-50 inset-0 overflow-y-auto">
+            <div className="flex items-center justify-center min-h-screen px-4">
+              <div aria-hidden className="fixed inset-0 bg-black opacity-30" />
+              <div className="relative bg-white rounded-lg max-w-md w-full mx-auto p-8 z-10">
+                <Dialog.Title className="text-lg font-bold mb-4">Submit Your Tip</Dialog.Title>
+                <form ref={formRef} onSubmit={e => {
+                  e.preventDefault();
+                  const mailto = `mailto:druhin.mukherjee@gmail.com?subject=Pet%20Tip%20Submission&body=Name:%20${encodeURIComponent(form.name)}%0AEmail:%20${encodeURIComponent(form.email)}%0ACategory:%20${encodeURIComponent(form.category)}%0ATip:%20${encodeURIComponent(form.tip)}%0AImage%20URL:%20${encodeURIComponent(form.imageUrl)}`;
+                  window.open(mailto, '_blank');
+                  setIsModalOpen(false);
+                  setForm({ name: '', email: '', tip: '', category: '', imageUrl: '' });
+                }} className="space-y-4">
+                  <input required className="w-full border rounded px-3 py-2" placeholder="Your Name" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
+                  <input required type="email" className="w-full border rounded px-3 py-2" placeholder="Your Email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
+                  <input required className="w-full border rounded px-3 py-2" placeholder="Category (e.g. Training, Nutrition)" value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} />
+                  <textarea required minLength={20} className="w-full border rounded px-3 py-2" placeholder="Your Tip (at least 20 characters)" value={form.tip} onChange={e => setForm(f => ({ ...f, tip: e.target.value }))} rows={4} />
+                  <input className="w-full border rounded px-3 py-2" placeholder="Image URL (optional)" value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))} />
+                  <div className="flex justify-end gap-2">
+                    <button type="button" className="px-4 py-2 rounded bg-gray-200" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                    <button type="submit" className="px-4 py-2 rounded bg-indigo-600 text-white">Send</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </Dialog>
         </div>
       </div>
     </div>

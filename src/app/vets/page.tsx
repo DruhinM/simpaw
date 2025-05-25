@@ -15,6 +15,8 @@ import Image from 'next/image';
 import { fetchSheetData, transformVetData } from '@/lib/data';
 import { Spinner } from '@/components/Spinner';
 import { Pagination } from '@/components/Pagination';
+import { Dialog } from '@headlessui/react';
+import { useRef } from 'react';
 
 interface Vet {
   id: string;
@@ -35,6 +37,9 @@ export default function VetsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [form, setForm] = useState({ name: '', vetName: '', location: '', contact: '', reason: '' });
+  const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     async function loadVets() {
@@ -160,6 +165,9 @@ export default function VetsPage() {
                   fill
                   className="object-cover"
                 />
+                {vet.emergency && (
+                  <span className="absolute top-2 left-2 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow">Verified</span>
+                )}
               </div>
               <div className="p-6">
                 <div className="flex justify-between items-start">
@@ -232,6 +240,51 @@ export default function VetsPage() {
             </div>
           </div>
         </div>
+
+        {/* Request to Add a Vet Section */}
+        <div className="mt-16 rounded-2xl bg-indigo-50 py-10 px-6 sm:py-16 sm:px-12">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-2xl font-bold tracking-tight text-indigo-900">Know a great vet we missed?</h2>
+            <p className="mt-4 text-lg leading-6 text-indigo-700">
+              Help us keep our directory up to date by requesting to add a veterinary clinic.
+            </p>
+            <div className="mt-6">
+              <button
+                className="rounded-md bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
+                onClick={() => setIsModalOpen(true)}
+              >
+                Request to Add a Vet
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Modal for vet submission */}
+        <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} className="fixed z-50 inset-0 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4">
+            <div aria-hidden className="fixed inset-0 bg-black opacity-30" />
+            <div className="relative bg-white rounded-lg max-w-md w-full mx-auto p-8 z-10">
+              <Dialog.Title className="text-lg font-bold mb-4">Request to Add a Vet</Dialog.Title>
+              <form ref={formRef} onSubmit={e => {
+                e.preventDefault();
+                const mailto = `mailto:druhin.mukherjee@gmail.com?subject=Vet%20Addition%20Request&body=Your%20Name:%20${encodeURIComponent(form.name)}%0AVet%20Name:%20${encodeURIComponent(form.vetName)}%0ALocation:%20${encodeURIComponent(form.location)}%0AContact:%20${encodeURIComponent(form.contact)}%0AReason:%20${encodeURIComponent(form.reason)}`;
+                window.open(mailto, '_blank');
+                setIsModalOpen(false);
+                setForm({ name: '', vetName: '', location: '', contact: '', reason: '' });
+              }} className="space-y-4">
+                <input required className="w-full border rounded px-3 py-2" placeholder="Your Name" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
+                <input required className="w-full border rounded px-3 py-2" placeholder="Vet Name" value={form.vetName} onChange={e => setForm(f => ({ ...f, vetName: e.target.value }))} />
+                <input className="w-full border rounded px-3 py-2" placeholder="Location" value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} />
+                <input className="w-full border rounded px-3 py-2" placeholder="Contact Info (optional)" value={form.contact} onChange={e => setForm(f => ({ ...f, contact: e.target.value }))} />
+                <textarea className="w-full border rounded px-3 py-2" placeholder="Why should we add this vet?" value={form.reason} onChange={e => setForm(f => ({ ...f, reason: e.target.value }))} rows={3} />
+                <div className="flex justify-end gap-2">
+                  <button type="button" className="px-4 py-2 rounded bg-gray-200" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                  <button type="submit" className="px-4 py-2 rounded bg-indigo-600 text-white">Send</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </Dialog>
       </div>
     </div>
   );
