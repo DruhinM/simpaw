@@ -14,6 +14,8 @@ import { fetchSheetData } from '@/lib/data';
 import { transformStoryData } from '@/lib/data';
 import { Spinner } from '@/components/Spinner';
 import { Pagination } from '@/components/Pagination';
+import { Dialog } from '@headlessui/react';
+import { useRef } from 'react';
 
 interface Story {
   id: string;
@@ -31,6 +33,9 @@ export default function StoriesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [form, setForm] = useState({ name: '', email: '', title: '', story: '', imageUrl: '' });
+  const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     async function loadStories() {
@@ -117,6 +122,9 @@ export default function StoriesPage() {
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-12">
           {currentStories.map((story) => (
             <article key={story.id} className="flex flex-col bg-white rounded-xl shadow-sm p-6">
+              <div className="relative h-48 w-full mb-4">
+                <Image src={story.imageUrl} alt={story.title} fill className="object-cover rounded-lg" />
+              </div>
               <div className="flex items-center gap-x-4 text-xs">
                 <div className="flex items-center gap-2">
                   <CalendarIcon className="h-4 w-4 text-gray-400" />
@@ -130,10 +138,8 @@ export default function StoriesPage() {
                 </div>
               </div>
               <div className="group relative mt-4">
-                <h3 className="text-lg font-semibold leading-6 text-gray-900">
-                  {story.title}
-                </h3>
-                <p className="mt-3 line-clamp-3 text-sm leading-6 text-gray-600">
+                <h3 className="text-lg font-semibold leading-6 text-gray-900">{story.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-gray-600">
                   {story.content}
                 </p>
               </div>
@@ -177,13 +183,42 @@ export default function StoriesPage() {
               Your journey could inspire other pet parents. Share your experience with our community.
             </p>
             <div className="mt-6">
-              <button className="rounded-md bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">
+              <button
+                className="rounded-md bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
+                onClick={() => setIsModalOpen(true)}
+              >
                 Share Your Story
               </button>
             </div>
           </div>
         </div>
       </div>
+      {/* Modal for story submission */}
+      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} className="fixed z-50 inset-0 overflow-y-auto">
+        <div className="flex items-center justify-center min-h-screen px-4">
+          <div aria-hidden className="fixed inset-0 bg-black opacity-30" />
+          <div className="relative bg-white rounded-lg max-w-md w-full mx-auto p-8 z-10">
+            <Dialog.Title className="text-lg font-bold mb-4">Share Your Story</Dialog.Title>
+            <form ref={formRef} onSubmit={e => {
+              e.preventDefault();
+              const mailto = `mailto:druhin.mukherjee@gmail.com?subject=Pet%20Story%20Submission&body=Name:%20${encodeURIComponent(form.name)}%0AEmail:%20${encodeURIComponent(form.email)}%0ATitle:%20${encodeURIComponent(form.title)}%0AStory:%20${encodeURIComponent(form.story)}%0AImage%20URL:%20${encodeURIComponent(form.imageUrl)}`;
+              window.open(mailto, '_blank');
+              setIsModalOpen(false);
+              setForm({ name: '', email: '', title: '', story: '', imageUrl: '' });
+            }} className="space-y-4">
+              <input required className="w-full border rounded px-3 py-2" placeholder="Your Name" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
+              <input required type="email" className="w-full border rounded px-3 py-2" placeholder="Your Email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
+              <input required className="w-full border rounded px-3 py-2" placeholder="Story Title" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
+              <textarea required minLength={100} className="w-full border rounded px-3 py-2" placeholder="Your Story (at least 100 words)" value={form.story} onChange={e => setForm(f => ({ ...f, story: e.target.value }))} rows={6} />
+              <input className="w-full border rounded px-3 py-2" placeholder="Image URL (optional)" value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))} />
+              <div className="flex justify-end gap-2">
+                <button type="button" className="px-4 py-2 rounded bg-gray-200" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                <button type="submit" className="px-4 py-2 rounded bg-indigo-600 text-white">Send</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 } 

@@ -87,12 +87,12 @@ export default function TipsPage() {
                 />
               </div>
             )}
-            <div className="p-4">
+            <div className="p-6 min-h-[220px] flex flex-col">
               <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full mb-2">
                 {tip.category}
               </span>
               <h2 className="text-xl font-semibold mb-2">{tip.title}</h2>
-              <p className="text-gray-600">{tip.content}</p>
+              <p className="text-gray-600 text-base leading-relaxed flex-1" style={{ minHeight: '120px' }}>{tip.content}</p>
               <div className="mt-4 text-sm text-gray-500">
                 {new Date(tip.createdAt).toLocaleDateString()}
               </div>
