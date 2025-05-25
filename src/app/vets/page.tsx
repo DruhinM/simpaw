@@ -10,7 +10,7 @@ import {
   BuildingOffice2Icon,
   AcademicCapIcon,
   ShieldCheckIcon,
-  CalendarIcon
+  ClockIcon
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import { fetchSheetData, transformVetData } from '@/lib/data';

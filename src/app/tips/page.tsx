@@ -1,16 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { fetchSheetData, transformTipData } from '@/lib/data';
 import { Spinner } from '@/components/Spinner';
 import { 
-  AcademicCapIcon, 
-  HeartIcon, 
-  SparklesIcon,
-  ShieldCheckIcon,
-  ChartBarIcon,
-  UserGroupIcon
+  ArrowPathIcon,
+  CloudArrowUpIcon,
+  LockClosedIcon,
+  ServerIcon,
+  UserGroupIcon,
 } from '@heroicons/react/24/outline';
+import Image from 'next/image';
 
 interface Tip {
   id: string;
@@ -57,8 +57,8 @@ export default function TipsPage() {
 
   const stats = [
     { name: 'Happy Pet Parents', value: '10,000+', icon: UserGroupIcon },
-    { name: 'Expert Tips', value: '500+', icon: AcademicCapIcon },
-    { name: 'Success Stories', value: '2,500+', icon: SparklesIcon },
+    { name: 'Expert Tips', value: '500+', icon: ArrowPathIcon },
+    { name: 'Success Stories', value: '2,500+', icon: CloudArrowUpIcon },
   ];
 
   return (
@@ -69,11 +69,14 @@ export default function TipsPage() {
         {tips.map((tip) => (
           <div key={tip.id} className="bg-white rounded-lg shadow-md overflow-hidden">
             {tip.imageUrl && (
-              <img 
-                src={tip.imageUrl} 
-                alt={tip.title}
-                className="w-full h-48 object-cover"
-              />
+              <div className="relative h-64 w-full">
+                <Image
+                  src={tip.imageUrl}
+                  alt={tip.title}
+                  fill
+                  className="object-cover rounded-lg"
+                />
+              </div>
             )}
             <div className="p-4">
               <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full mb-2">

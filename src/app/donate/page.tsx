@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
   HeartIcon,
   GiftIcon,
@@ -11,7 +11,6 @@ import {
   UserGroupIcon,
   HandRaisedIcon
 } from '@heroicons/react/24/outline';
-import Image from 'next/image';
 
 declare global {
   interface Window {
