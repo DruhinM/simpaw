@@ -8,11 +8,24 @@ interface SheetRow {
 
 // Format private key by replacing literal \n with actual newlines
 const formatPrivateKey = (key: string) => {
-  // Remove any extra spaces and ensure proper line breaks
-  return key
-    .replace(/\\n/g, '\n')
-    .replace(/\s+/g, ' ')
-    .trim();
+  // First, remove any extra whitespace and quotes
+  let formattedKey = key.trim();
+  if (formattedKey.startsWith('"') && formattedKey.endsWith('"')) {
+    formattedKey = formattedKey.slice(1, -1);
+  }
+  
+  // Replace literal \n with actual newlines
+  formattedKey = formattedKey.replace(/\\n/g, '\n');
+  
+  // Ensure proper header and footer
+  if (!formattedKey.includes('-----BEGIN PRIVATE KEY-----')) {
+    formattedKey = '-----BEGIN PRIVATE KEY-----\n' + formattedKey;
+  }
+  if (!formattedKey.includes('-----END PRIVATE KEY-----')) {
+    formattedKey = formattedKey + '\n-----END PRIVATE KEY-----\n';
+  }
+  
+  return formattedKey;
 };
 
 // Validate environment variables
@@ -25,6 +38,13 @@ const validateEnvVariables = () => {
   if (missing.length > 0) {
     throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
   }
+  
+  // Log environment variable presence (without revealing sensitive data)
+  console.log('Sheets Config - Environment variables check:', {
+    SHEET_ID: process.env.SHEET_ID?.substring(0, 5) + '...',
+    GOOGLE_SHEETS_CLIENT_EMAIL: process.env.GOOGLE_SHEETS_CLIENT_EMAIL?.split('@')[0] + '...',
+    GOOGLE_SHEETS_PRIVATE_KEY: process.env.GOOGLE_SHEETS_PRIVATE_KEY ? 'Present' : 'Missing',
+  });
 };
 
 // Initialize auth
@@ -32,8 +52,12 @@ const getAuth = () => {
   validateEnvVariables();
   
   const privateKey = formatPrivateKey(process.env.GOOGLE_SHEETS_PRIVATE_KEY!);
-  console.log('Private key length:', privateKey.length);
-  console.log('Private key starts with:', privateKey.substring(0, 50));
+  console.log('Sheets Config - Private key format check:', {
+    length: privateKey.length,
+    hasHeader: privateKey.includes('-----BEGIN PRIVATE KEY-----'),
+    hasFooter: privateKey.includes('-----END PRIVATE KEY-----'),
+    containsNewlines: privateKey.includes('\n'),
+  });
   
   return new GoogleAuth({
     credentials: {

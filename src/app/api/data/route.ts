@@ -17,10 +17,23 @@ export async function OPTIONS() {
 export async function GET(request: Request) {
   try {
     // Log environment variables (excluding sensitive data)
-    console.log('Checking environment variables...');
-    console.log('SHEET_ID exists:', !!process.env.SHEET_ID);
-    console.log('GOOGLE_SHEETS_CLIENT_EMAIL exists:', !!process.env.GOOGLE_SHEETS_CLIENT_EMAIL);
-    console.log('GOOGLE_SHEETS_PRIVATE_KEY exists:', !!process.env.GOOGLE_SHEETS_PRIVATE_KEY);
+    console.log('API Route - Checking environment variables...');
+    const envVars = {
+      SHEET_ID: process.env.SHEET_ID?.substring(0, 5) + '...',
+      GOOGLE_SHEETS_CLIENT_EMAIL: process.env.GOOGLE_SHEETS_CLIENT_EMAIL?.split('@')[0] + '...',
+      GOOGLE_SHEETS_PRIVATE_KEY: process.env.GOOGLE_SHEETS_PRIVATE_KEY ? 'Present' : 'Missing',
+    };
+    console.log('Environment variables:', envVars);
+
+    // Validate environment variables
+    if (!process.env.SHEET_ID || !process.env.GOOGLE_SHEETS_CLIENT_EMAIL || !process.env.GOOGLE_SHEETS_PRIVATE_KEY) {
+      const missing = [];
+      if (!process.env.SHEET_ID) missing.push('SHEET_ID');
+      if (!process.env.GOOGLE_SHEETS_CLIENT_EMAIL) missing.push('GOOGLE_SHEETS_CLIENT_EMAIL');
+      if (!process.env.GOOGLE_SHEETS_PRIVATE_KEY) missing.push('GOOGLE_SHEETS_PRIVATE_KEY');
+      
+      throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
+    }
 
     const { searchParams } = new URL(request.url);
     const sheet = searchParams.get('sheet');
@@ -32,24 +45,36 @@ export async function GET(request: Request) {
       ));
     }
 
-    console.log('Fetching data from sheet:', sheet);
+    console.log('API Route - Fetching data from sheet:', sheet);
     const range = `${sheet}!A1:P`;
-    console.log('Using range:', range);
+    console.log('API Route - Using range:', range);
 
-    const data = await getSheetData(range);
-    console.log('Data fetched successfully, rows:', data.data.length);
-    
-    return corsResponse(NextResponse.json({ success: true, data: data.data }));
+    try {
+      const data = await getSheetData(range);
+      console.log('API Route - Data fetched successfully, rows:', data.data.length);
+      return corsResponse(NextResponse.json({ success: true, data: data.data }));
+    } catch (sheetError: any) {
+      console.error('API Route - Google Sheets API Error:', {
+        message: sheetError.message,
+        code: sheetError.code,
+        status: sheetError.status,
+        details: sheetError.details,
+      });
+      throw sheetError;
+    }
   } catch (error: any) {
-    console.error('Error in /api/data route:', error);
-    console.error('Error message:', error.message);
-    console.error('Error stack:', error.stack);
+    console.error('API Route - Error details:', {
+      message: error.message,
+      stack: error.stack,
+      code: error.code,
+      status: error.status,
+    });
     
     return corsResponse(NextResponse.json(
       { 
         error: 'Failed to fetch data', 
         message: error.message,
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        details: error.code ? `Error code: ${error.code}` : undefined,
       },
       { status: 500 }
     ));
