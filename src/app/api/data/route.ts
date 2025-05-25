@@ -3,6 +3,12 @@ import { getSheetData, updateSheetData, appendSheetData, deleteSheetRow } from '
 
 export async function GET(request: Request) {
   try {
+    // Log environment variables (excluding sensitive data)
+    console.log('Checking environment variables...');
+    console.log('SHEET_ID exists:', !!process.env.SHEET_ID);
+    console.log('GOOGLE_SHEETS_CLIENT_EMAIL exists:', !!process.env.GOOGLE_SHEETS_CLIENT_EMAIL);
+    console.log('GOOGLE_SHEETS_PRIVATE_KEY exists:', !!process.env.GOOGLE_SHEETS_PRIVATE_KEY);
+
     const { searchParams } = new URL(request.url);
     const sheet = searchParams.get('sheet');
     
@@ -13,14 +19,26 @@ export async function GET(request: Request) {
       );
     }
 
+    console.log('Fetching data from sheet:', sheet);
     const range = `${sheet}!A1:P`;
+    console.log('Using range:', range);
+
     const data = await getSheetData(range);
+    console.log('Data fetched successfully, rows:', data.data.length);
     
-    return NextResponse.json({ success: true, data });
+    return NextResponse.json({ success: true, data: data.data });
   } catch (error: any) {
-    console.error('Error fetching data:', error);
+    console.error('Error in /api/data route:', error);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    
+    // Return a more detailed error response
     return NextResponse.json(
-      { error: 'Failed to fetch data', details: error.message },
+      { 
+        error: 'Failed to fetch data', 
+        message: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      },
       { status: 500 }
     );
   }
