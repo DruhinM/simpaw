@@ -3,8 +3,32 @@
 import React from 'react';
 import Image from "next/image";
 import Link from "next/link";
+import { HeartIcon, UserGroupIcon, BuildingOffice2Icon, LightBulbIcon } from '@heroicons/react/24/outline';
 
 export default function Home() {
+  // Example stats (replace with dynamic values if available)
+  const stats = [
+    { name: 'Pets Helped', value: '2,500+', icon: HeartIcon },
+    { name: 'Active Donors', value: '1,000+', icon: UserGroupIcon },
+    { name: 'Vets Listed', value: '120+', icon: BuildingOffice2Icon },
+    { name: 'Tips Shared', value: '500+', icon: LightBulbIcon },
+  ];
+
+  // Add NGO partners data (should match donations page)
+  const ngoPartners = [
+    {
+      name: 'Paws & Claws Foundation',
+      logo: '/ngos/paws-claws.png',
+      website: 'https://pawsclaws.org',
+    },
+    {
+      name: 'Happy Tails Trust',
+      logo: '/ngos/happy-tails.png',
+      website: 'https://happytails.org',
+    },
+    // Add more NGOs as needed
+  ];
+
   return (
     <div className="relative pt-16">
       {/* Hero section */}
@@ -43,6 +67,45 @@ export default function Home() {
             width={1920}
             height={1280}
           />
+        </div>
+      </div>
+
+      {/* Modern Stats Section */}
+      <div className="mx-auto max-w-7xl px-6 py-16 sm:py-24 lg:px-8">
+        <div className="mx-auto max-w-4xl text-center mb-12">
+          <h2 className="text-2xl font-bold tracking-tight text-indigo-600 sm:text-3xl mb-2">Our Impact</h2>
+          <p className="text-lg text-gray-600">Together, we're making a difference for pets and their families.</p>
+        </div>
+        <dl className="grid grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-4">
+          {stats.map((stat) => (
+            <div key={stat.name} className="flex flex-col items-center bg-white rounded-xl shadow p-6 hover:shadow-lg transition-shadow">
+              <stat.icon className="h-10 w-10 text-indigo-600 mb-3" />
+              <dt className="text-base font-medium text-gray-600">{stat.name}</dt>
+              <dd className="text-3xl font-bold text-gray-900 mt-2">{stat.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+
+      {/* Inspiring Pet Quote Section */}
+      <div className="mx-auto max-w-3xl px-6 py-12 rounded-2xl bg-gradient-to-r from-indigo-50 to-pink-50 shadow-lg flex flex-col items-center mb-16">
+        <svg className="h-10 w-10 text-indigo-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2a4 4 0 014-4h1V7a4 4 0 10-8 0v4a4 4 0 004 4v2a4 4 0 01-4-4V7a6 6 0 1112 0v4a6 6 0 01-6 6z" /></svg>
+        <blockquote className="text-2xl italic font-semibold text-indigo-900 text-center">
+          "The greatness of a nation and its moral progress can be judged by the way its animals are treated."
+        </blockquote>
+        <figcaption className="mt-4 text-indigo-700 font-medium text-lg">— Mahatma Gandhi</figcaption>
+      </div>
+
+      {/* NGO Partners Section */}
+      <div className="mx-auto max-w-5xl px-6 py-10 mb-12">
+        <h2 className="text-xl font-bold text-center mb-6 text-indigo-700">Our NGO Partners</h2>
+        <div className="flex gap-6 overflow-x-auto sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-8 sm:overflow-x-visible">
+          {ngoPartners.map((ngo) => (
+            <a key={ngo.name} href={ngo.website} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center bg-white rounded-xl shadow p-4 min-w-[180px] hover:shadow-lg transition-shadow mx-2 sm:mx-0">
+              <img src={ngo.logo} alt={ngo.name} className="h-16 w-16 object-contain mb-2 rounded-full border border-gray-200" />
+              <span className="text-sm font-medium text-gray-900 text-center">{ngo.name}</span>
+            </a>
+          ))}
         </div>
       </div>
 

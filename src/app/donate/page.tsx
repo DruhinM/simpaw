@@ -93,7 +93,7 @@ export default function DonatePage() {
     async function fetchContributors() {
       try {
         const donations = await getDonations();
-        const names = donations.map((d) => d.donor).filter(Boolean);
+        const names = donations.slice(1).map((d) => d.donor).filter(Boolean);
         const uniqueNames = Array.from(new Set(names));
         setContributors(uniqueNames);
       } catch (e) {
@@ -102,6 +102,23 @@ export default function DonatePage() {
     }
     fetchContributors();
   }, []);
+
+  // Add NGO partners data
+  const ngoPartners = [
+    {
+      name: 'Paws & Claws Foundation',
+      logo: '/ngos/paws-claws.png',
+      description: 'Providing shelter, food, and medical care to stray and abandoned animals across the city.',
+      website: 'https://pawsclaws.org',
+    },
+    {
+      name: 'Happy Tails Trust',
+      logo: '/ngos/happy-tails.png',
+      description: 'Focused on animal rescue, adoption, and community education for responsible pet ownership.',
+      website: 'https://happytails.org',
+    },
+    // Add more NGOs as needed
+  ];
 
   return (
     <div className="pt-24 pb-16">
@@ -195,6 +212,21 @@ export default function DonatePage() {
           </div>
         </div>
 
+        {/* NGO Partners Section */}
+        <div className="mt-16">
+          <h2 className="text-2xl font-bold text-center mb-12">Our NGO Partners</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            {ngoPartners.map((ngo) => (
+              <div key={ngo.name} className="bg-white rounded-xl shadow p-6 flex flex-col items-center text-center hover:shadow-lg transition-shadow">
+                <img src={ngo.logo} alt={ngo.name} className="h-20 w-20 object-contain mb-4 rounded-full border border-gray-200" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{ngo.name}</h3>
+                <p className="text-gray-600 text-sm mb-4">{ngo.description}</p>
+                <a href={ngo.website} target="_blank" rel="noopener noreferrer" className="text-indigo-600 font-medium hover:underline">Visit Website</a>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Donation Tiers */}
         <div className="mt-16">
           <h2 className="text-2xl font-bold text-center mb-12">Choose Your Impact Level</h2>
@@ -240,13 +272,22 @@ export default function DonatePage() {
         {contributors.length > 0 && (
           <div className="mt-20">
             <h2 className="text-2xl font-bold text-center mb-8">Our Contributors</h2>
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {contributors.map((name) => (
-                <span key={name} className="inline-block rounded-full bg-indigo-100 text-indigo-700 px-5 py-2 text-base font-semibold shadow-sm">
-                  {name}
-                </span>
+                <div key={name} className="flex items-center justify-center">
+                  <span className="inline-block rounded-full bg-indigo-100 text-indigo-700 px-4 py-2 text-sm font-medium shadow-sm truncate w-full text-center">
+                    {name}
+                  </span>
+                </div>
               ))}
             </div>
+            {contributors.length > 24 && (
+              <div className="mt-8 text-center">
+                <p className="text-gray-600">
+                  And {contributors.length - 24} more amazing contributors...
+                </p>
+              </div>
+            )}
           </div>
         )}
       </div>
