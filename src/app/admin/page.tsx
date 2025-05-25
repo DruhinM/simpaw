@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   TableCellsIcon,
   PencilIcon,
@@ -37,17 +37,13 @@ const sections = [
 ];
 
 export default function AdminPage() {
+  const [data, setData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState(sections[0]);
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState<any>(null);
-  const [data, setData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchData();
-  }, [activeSection]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/data?sheet=${activeSection.sheet}`);
@@ -58,7 +54,11 @@ export default function AdminPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activeSection.sheet]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleEdit = (data: any) => {
     setEditData(data);

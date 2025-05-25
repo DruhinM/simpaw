@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   MapPinIcon, 
   StarIcon, 
-  HeartIcon,
   ClockIcon,
   BuildingStorefrontIcon,
   UserGroupIcon,
