@@ -3,15 +3,15 @@
 import React from 'react';
 import Image from "next/image";
 import Link from "next/link";
-import { HeartIcon, UserGroupIcon, BuildingOffice2Icon, LightBulbIcon } from '@heroicons/react/24/outline';
+import { HeartIcon, UserGroupIcon, BuildingOffice2Icon, LightBulbIcon, ArrowTrendingUpIcon, ChatBubbleLeftRightIcon, UserIcon } from '@heroicons/react/24/outline';
 
 export default function Home() {
   // Example stats (replace with dynamic values if available)
   const stats = [
-    { name: 'Pets Helped', value: '2,500+', icon: HeartIcon },
-    { name: 'Active Donors', value: '1,000+', icon: UserGroupIcon },
-    { name: 'Vets Listed', value: '120+', icon: BuildingOffice2Icon },
-    { name: 'Tips Shared', value: '500+', icon: LightBulbIcon },
+    { name: 'Pets Helped', value: '2,500+', icon: HeartIcon, bg: 'bg-pink-50' },
+    { name: 'Active Donors', value: '1,000+', icon: UserGroupIcon, bg: 'bg-indigo-50' },
+    { name: 'Vets Listed', value: '120+', icon: BuildingOffice2Icon, bg: 'bg-green-50' },
+    { name: 'Tips Shared', value: '500+', icon: LightBulbIcon, bg: 'bg-yellow-50' },
   ];
 
   // Add NGO partners data (should match donations page)
@@ -78,13 +78,52 @@ export default function Home() {
         </div>
         <dl className="grid grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-4">
           {stats.map((stat) => (
-            <div key={stat.name} className="flex flex-col items-center bg-white rounded-xl shadow p-6 hover:shadow-lg transition-shadow">
+            <div key={stat.name} className={`flex flex-col items-center ${stat.bg} rounded-xl shadow p-6 hover:shadow-lg transition-shadow`}>
               <stat.icon className="h-10 w-10 text-indigo-600 mb-3" />
               <dt className="text-base font-medium text-gray-600">{stat.name}</dt>
               <dd className="text-3xl font-bold text-gray-900 mt-2">{stat.value}</dd>
             </div>
           ))}
         </dl>
+      </div>
+
+      {/* How It Works Section */}
+      <div className="mx-auto max-w-5xl px-6 py-12 mb-12">
+        <h2 className="text-2xl font-bold text-center mb-8 text-indigo-700">How It Works</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="flex flex-col items-center text-center bg-white rounded-xl shadow p-6">
+            <ArrowTrendingUpIcon className="h-10 w-10 text-pink-500 mb-3" />
+            <h3 className="font-semibold text-lg mb-2">Join the Community</h3>
+            <p className="text-gray-600">Sign up and become part of a growing network of pet lovers and experts.</p>
+          </div>
+          <div className="flex flex-col items-center text-center bg-white rounded-xl shadow p-6">
+            <LightBulbIcon className="h-10 w-10 text-yellow-500 mb-3" />
+            <h3 className="font-semibold text-lg mb-2">Share & Learn</h3>
+            <p className="text-gray-600">Access tips, share your stories, and learn from others' experiences.</p>
+          </div>
+          <div className="flex flex-col items-center text-center bg-white rounded-xl shadow p-6">
+            <ChatBubbleLeftRightIcon className="h-10 w-10 text-indigo-500 mb-3" />
+            <h3 className="font-semibold text-lg mb-2">Make an Impact</h3>
+            <p className="text-gray-600">Support pets in need and see the difference your contribution makes.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Testimonials Section */}
+      <div className="mx-auto max-w-4xl px-6 py-12 mb-16">
+        <h2 className="text-2xl font-bold text-center mb-8 text-indigo-700">What Our Community Says</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="bg-white rounded-xl shadow p-6 flex flex-col items-center text-center">
+            <UserIcon className="h-12 w-12 text-indigo-400 mb-2" />
+            <blockquote className="italic text-lg text-gray-800 mb-2">“Simpaw has made pet parenting so much easier. The tips and community support are amazing!”</blockquote>
+            <span className="font-semibold text-indigo-700">— Priya S.</span>
+          </div>
+          <div className="bg-white rounded-xl shadow p-6 flex flex-col items-center text-center">
+            <UserIcon className="h-12 w-12 text-pink-400 mb-2" />
+            <blockquote className="italic text-lg text-gray-800 mb-2">“I found the best vet for my dog through Simpaw. Love the resources and the positive vibe!”</blockquote>
+            <span className="font-semibold text-pink-700">— Rahul M.</span>
+          </div>
+        </div>
       </div>
 
       {/* Inspiring Pet Quote Section */}
