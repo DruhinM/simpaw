@@ -286,7 +286,7 @@ export default function StoriesPage() {
         <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
         <div className="fixed inset-0 flex items-center justify-center p-4">
           {selectedStory && (
-            <Dialog.Panel className="relative bg-white rounded-lg max-w-2xl w-full mx-auto p-8">
+            <Dialog.Panel className="relative bg-white rounded-lg max-w-2xl w-full mx-auto p-8 max-h-[80vh] overflow-y-auto">
               <Dialog.Title className="text-2xl font-bold mb-2">{selectedStory.title}</Dialog.Title>
               <div className="flex items-center gap-x-3 text-xs mb-4">
                 <CalendarIcon className="h-4 w-4 text-gray-400" />
