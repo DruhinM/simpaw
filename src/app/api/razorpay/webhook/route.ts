@@ -4,34 +4,27 @@ import crypto from 'crypto';
 export async function POST(request: Request) {
   try {
     const body = await request.text();
-    const signature = request.headers.get('x-razorpay-signature');
+    const signature = request.headers.get('x-razorpay-signature') || '';
 
     const expectedSignature = crypto
-      .createHmac('sha256', process.env.RAZORPAY_WEBHOOK_SECRET!)
+      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!)
       .update(body)
       .digest('hex');
 
     if (signature === expectedSignature) {
-      const payment = JSON.parse(body);
+      // Payment is verified
+      const paymentDetails = JSON.parse(body);
+      console.log('Payment verified:', paymentDetails);
       
-      // Handle successful payment
-      // You can:
-      // 1. Update your database
-      // 2. Send confirmation email
-      // 3. Trigger any post-payment workflows
+      // Here you can add your business logic for successful payments
+      // For example, update order status, send confirmation email, etc.
 
       return NextResponse.json({ status: 'ok' });
+    } else {
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
     }
-
-    return NextResponse.json(
-      { error: 'Invalid signature' },
-      { status: 400 }
-    );
   } catch (error) {
     console.error('Webhook error:', error);
-    return NextResponse.json(
-      { error: 'Webhook processing failed' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Webhook error' }, { status: 500 });
   }
 } 

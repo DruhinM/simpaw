@@ -74,6 +74,10 @@ export default function RefundPolicyPage() {
               Response Time: Within 24-48 hours
             </p>
           </section>
+
+          <p className="mt-4 text-base text-gray-600">
+            &ldquo;No refund&rdquo; policy for digital services
+          </p>
         </div>
       </div>
     </div>

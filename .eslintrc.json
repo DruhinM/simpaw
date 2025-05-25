@@ -10,6 +10,13 @@
     "react-hooks/exhaustive-deps": ["warn", {
       "additionalHooks": "(useMyCustomHook|useMyOtherCustomHook)"
     }],
-    "@next/next/no-img-element": "warn"
-  }
+    "@next/next/no-img-element": "warn",
+    "quotes": ["error", "single", { "avoidEscape": true }]
+  },
+  "ignorePatterns": [
+    "node_modules/",
+    ".next/",
+    "out/",
+    "public/"
+  ]
 } 

@@ -91,7 +91,7 @@ export default function ContactPage() {
         <div className="mx-auto max-w-2xl text-center">
           <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Contact Us</h1>
           <p className="mt-2 text-lg leading-8 text-gray-600">
-            We'd love to hear from you. Please fill out this form or use our contact information below.
+            We&apos;d love to hear from you. Please fill out this form or use our contact information below.
           </p>
         </div>
 
@@ -101,7 +101,7 @@ export default function ContactPage() {
             <div className="max-w-xl lg:max-w-lg">
               <h2 className="text-2xl font-bold tracking-tight text-gray-900">Get in Touch</h2>
               <p className="mt-6 text-lg leading-8 text-gray-600">
-                Have questions about pet care? Want to contribute to our community? We're here to help!
+                We&apos;re here to help and answer any question you might have
               </p>
               
               <dl className="mt-10 space-y-4 text-base leading-7 text-gray-600">
