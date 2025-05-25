@@ -10,11 +10,11 @@ import {
   ShareIcon,
   BookmarkIcon
 } from '@heroicons/react/24/outline';
+import { Dialog } from '@headlessui/react';
 import { fetchSheetData } from '@/lib/data';
 import { transformStoryData } from '@/lib/data';
 import { Spinner } from '@/components/Spinner';
 import { Pagination } from '@/components/Pagination';
-import { Dialog } from '@headlessui/react';
 import { useRef } from 'react';
 
 interface Story {
@@ -141,7 +141,10 @@ export default function StoriesPage() {
             <article
               key={story.id}
               className={`flex flex-col bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow p-0 overflow-hidden border border-gray-100 cursor-pointer relative ${story.featured ? 'ring-2 ring-pink-400 bg-pink-50' : ''}`}
-              onClick={() => setSelectedStory(story)}
+              onClick={() => {
+                console.log('Opening story:', story.title);
+                setSelectedStory(story);
+              }}
             >
               <div className="relative h-48 w-full">
                 <Image src={story.imageUrl} alt={story.title} fill className="object-cover" />
@@ -169,20 +172,44 @@ export default function StoriesPage() {
                 <p className="text-gray-700 text-sm leading-6 flex-1 mb-4 line-clamp-4">{story.preview}</p>
                 <div className="flex items-center justify-between mt-auto">
                   <div className="flex gap-4">
-                    <button className="flex items-center gap-1 text-gray-500 hover:text-indigo-600 text-xs">
+                    <button 
+                      className="flex items-center gap-1 text-gray-500 hover:text-indigo-600 text-xs"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Handle like
+                      }}
+                    >
                       <HeartIcon className="h-4 w-4" />
                       <span>{story.likes || 0}</span>
                     </button>
-                    <button className="flex items-center gap-1 text-gray-500 hover:text-indigo-600 text-xs">
+                    <button 
+                      className="flex items-center gap-1 text-gray-500 hover:text-indigo-600 text-xs"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Handle comment
+                      }}
+                    >
                       <ChatBubbleLeftIcon className="h-4 w-4" />
                       <span>0</span>
                     </button>
                   </div>
                   <div className="flex gap-2">
-                    <button className="text-gray-500 hover:text-indigo-600">
+                    <button 
+                      className="text-gray-500 hover:text-indigo-600"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Handle share
+                      }}
+                    >
                       <ShareIcon className="h-4 w-4" />
                     </button>
-                    <button className="text-gray-500 hover:text-indigo-600">
+                    <button 
+                      className="text-gray-500 hover:text-indigo-600"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Handle bookmark
+                      }}
+                    >
                       <BookmarkIcon className="h-4 w-4" />
                     </button>
                   </div>
@@ -245,11 +272,15 @@ export default function StoriesPage() {
         </div>
       </Dialog>
       {/* Story Modal */}
-      <Dialog open={!!selectedStory} onClose={() => setSelectedStory(null)} className="fixed z-50 inset-0 overflow-y-auto">
-        <div className="flex items-center justify-center min-h-screen px-4">
-          <div aria-hidden className="fixed inset-0 bg-black opacity-30" />
+      <Dialog 
+        open={!!selectedStory} 
+        onClose={() => setSelectedStory(null)} 
+        className="relative z-50"
+      >
+        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+        <div className="fixed inset-0 flex items-center justify-center p-4">
           {selectedStory && (
-            <div className="relative bg-white rounded-lg max-w-2xl w-full mx-auto p-8 z-10">
+            <Dialog.Panel className="relative bg-white rounded-lg max-w-2xl w-full mx-auto p-8">
               <Dialog.Title className="text-2xl font-bold mb-2">{selectedStory.title}</Dialog.Title>
               <div className="flex items-center gap-x-3 text-xs mb-4">
                 <CalendarIcon className="h-4 w-4 text-gray-400" />
@@ -270,9 +301,14 @@ export default function StoriesPage() {
                 {selectedStory.fullStory || selectedStory.preview}
               </div>
               <div className="flex justify-end">
-                <button className="px-4 py-2 rounded bg-indigo-600 text-white" onClick={() => setSelectedStory(null)}>Close</button>
+                <button 
+                  className="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-500 transition-colors" 
+                  onClick={() => setSelectedStory(null)}
+                >
+                  Close
+                </button>
               </div>
-            </div>
+            </Dialog.Panel>
           )}
         </div>
       </Dialog>

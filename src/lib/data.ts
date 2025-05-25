@@ -205,7 +205,8 @@ type SheetRow = string[];
 
 export const getPets = async (): Promise<Pet[]> => {
   const data = await fetchSheetData('Pets');
-  return data.map((pet: SheetRow) => ({
+  // Skip header row
+  return data.slice(1).map((pet: SheetRow) => ({
     id: pet[0] || String(Date.now()),
     name: pet[1] || '',
     type: pet[2] || '',
@@ -220,7 +221,8 @@ export const getPets = async (): Promise<Pet[]> => {
 
 export const getStories = async (): Promise<Story[]> => {
   const data = await fetchSheetData('Stories');
-  return data.map((story: SheetRow) => ({
+  // Skip header row
+  return data.slice(1).map((story: SheetRow) => ({
     id: story[0] || String(Date.now()),
     title: story[1] || '',
     content: story[2] || '',
@@ -231,7 +233,8 @@ export const getStories = async (): Promise<Story[]> => {
 
 export const getTips = async (): Promise<Tip[]> => {
   const data = await fetchSheetData('Tips');
-  return data.map((tip: SheetRow) => ({
+  // Skip header row
+  return data.slice(1).map((tip: SheetRow) => ({
     id: tip[0] || String(Date.now()),
     title: tip[1] || '',
     content: tip[2] || '',
@@ -241,7 +244,8 @@ export const getTips = async (): Promise<Tip[]> => {
 
 export const getVets = async (): Promise<Vet[]> => {
   const data = await fetchSheetData('Vets');
-  return data.map((vet: SheetRow) => ({
+  // Skip header row
+  return data.slice(1).map((vet: SheetRow) => ({
     id: vet[0] || String(Date.now()),
     name: vet[1] || '',
     location: vet[2] || '',
@@ -252,7 +256,8 @@ export const getVets = async (): Promise<Vet[]> => {
 
 export const getPlaces = async (): Promise<Place[]> => {
   const data = await fetchSheetData('Places');
-  return data.map((place: SheetRow) => ({
+  // Skip header row
+  return data.slice(1).map((place: SheetRow) => ({
     id: place[0] || String(Date.now()),
     name: place[1] || '',
     type: place[2] || '',
@@ -264,7 +269,8 @@ export const getPlaces = async (): Promise<Place[]> => {
 
 export const getDonations = async (): Promise<{ amount: number; date: string; donor: string }[]> => {
   const data = await fetchSheetData('Donations');
-  return data.map((donation: SheetRow) => ({
+  // Skip header row
+  return data.slice(1).map((donation: SheetRow) => ({
     amount: Number(donation[3]) || 0,
     date: donation[6] || new Date().toISOString(),
     donor: donation[1] || 'Anonymous'
