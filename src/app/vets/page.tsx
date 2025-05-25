@@ -9,7 +9,13 @@ import {
   UserGroupIcon,
   BuildingOffice2Icon,
   AcademicCapIcon,
-  ShieldCheckIcon
+  ShieldCheckIcon,
+  GlobeAltIcon,
+  BriefcaseIcon,
+  UsersIcon,
+  ClockIcon,
+  IdentificationIcon,
+  CurrencyDollarIcon
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import { fetchSheetData, transformVetData } from '@/lib/data';
@@ -28,6 +34,13 @@ interface Vet {
   rating: number;
   imageUrl: string;
   emergency: boolean;
+  hours?: string;
+  specialization?: string;
+  languages?: string[];
+  animals?: string[];
+  experience?: string;
+  staff?: string[];
+  insurance?: string;
 }
 
 const ITEMS_PER_PAGE = 4;
@@ -41,7 +54,7 @@ export default function VetsPage() {
   const [form, setForm] = useState({ name: '', vetName: '', location: '', contact: '', reason: '' });
   const formRef = useRef<HTMLFormElement>(null);
   // Add filter state
-  const [selectedCity, setSelectedCity] = useState('All States');
+  const [selectedCity, setSelectedCity] = useState('All Cities');
   const [selectedSpecialty, setSelectedSpecialty] = useState('All Specialties');
 
   useEffect(() => {
@@ -63,13 +76,12 @@ export default function VetsPage() {
     loadVets();
   }, []);
 
-  // Extract unique states from addresses
-  const allStates = Array.from(new Set(vets.map(vet => {
-    // Try to extract state from address (assume state is second-to-last part)
+  // Extract unique cities from addresses
+  const allCities = Array.from(new Set(vets.map(vet => {
     const parts = vet.address.split(',').map(s => s.trim());
     return parts.length > 1 ? parts[parts.length - 2] : 'Unknown';
   }))).filter(Boolean);
-  allStates.unshift('All States');
+  allCities.unshift('All Cities');
 
   // Extract unique specialties from services
   const allSpecialties = Array.from(new Set(vets.flatMap(vet => vet.services))).filter(Boolean);
@@ -78,10 +90,10 @@ export default function VetsPage() {
   // Filter vets based on selected filters
   const filteredVets = vets.filter(vet => {
     const parts = vet.address.split(',').map(s => s.trim());
-    const vetState = parts.length > 1 ? parts[parts.length - 2] : 'Unknown';
-    const stateMatch = selectedCity === 'All States' || vetState === selectedCity;
+    const vetCity = parts.length > 1 ? parts[parts.length - 2] : 'Unknown';
+    const cityMatch = selectedCity === 'All Cities' || vetCity === selectedCity;
     const specialtyMatch = selectedSpecialty === 'All Specialties' || vet.services.includes(selectedSpecialty);
-    return stateMatch && specialtyMatch;
+    return cityMatch && specialtyMatch;
   });
 
   const totalPages = Math.ceil(filteredVets.length / ITEMS_PER_PAGE);
@@ -138,28 +150,29 @@ export default function VetsPage() {
         {/* Search Filters */}
         <div className="mt-16">
           <div className="rounded-xl bg-gray-50 p-6">
-            <div className="mb-4">
-              <div className="mb-2 font-semibold text-gray-700">Filter by State</div>
+            <div className="mb-6">
+              <div className="mb-2 font-semibold text-gray-700">Filter by City</div>
               <div className="flex gap-2 overflow-x-auto pb-2">
-                {allStates.map(state => (
+                {allCities.map(city => (
                   <button
-                    key={state}
-                    onClick={() => { setSelectedCity(state); setCurrentPage(1); }}
-                    className={`rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap border transition-colors ${selectedCity === state ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-900 border-gray-200 hover:bg-indigo-50'}`}
+                    key={city}
+                    onClick={() => { setSelectedCity(city); setCurrentPage(1); }}
+                    className={`rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap border transition-colors ${selectedCity === city ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-900 border-gray-200 hover:bg-indigo-50'}`}
                   >
-                    {state}
+                    {city}
                   </button>
                 ))}
               </div>
             </div>
             <div>
               <div className="mb-2 font-semibold text-gray-700">Filter by Specialty</div>
-              <div className="flex gap-2 overflow-x-auto pb-2">
+              <div className="flex flex-wrap gap-2">
                 {allSpecialties.map(specialty => (
                   <button
                     key={specialty}
                     onClick={() => { setSelectedSpecialty(specialty); setCurrentPage(1); }}
-                    className={`rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap border transition-colors ${selectedSpecialty === specialty ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-900 border-gray-200 hover:bg-indigo-50'}`}
+                    className={`rounded-full px-4 py-2 text-sm font-medium border transition-colors shadow-sm ${selectedSpecialty === specialty ? 'bg-pink-600 text-white border-pink-600' : 'bg-white text-gray-900 border-gray-200 hover:bg-pink-50'}`}
+                    style={{ minWidth: '120px', marginBottom: '8px' }}
                   >
                     {specialty}
                   </button>
@@ -205,6 +218,48 @@ export default function VetsPage() {
                     <EnvelopeIcon className="h-5 w-5 text-gray-400" />
                     <span className="text-sm text-gray-600">{vet.email}</span>
                   </div>
+                  {vet.hours && (
+                    <div className="flex items-center gap-x-3">
+                      <ClockIcon className="h-5 w-5 text-gray-400" />
+                      <span className="text-sm text-gray-600">{vet.hours}</span>
+                    </div>
+                  )}
+                  {vet.specialization && (
+                    <div className="flex items-center gap-x-3">
+                      <BriefcaseIcon className="h-5 w-5 text-gray-400" />
+                      <span className="text-sm text-gray-600">{vet.specialization}</span>
+                    </div>
+                  )}
+                  {vet.languages && vet.languages.length > 0 && (
+                    <div className="flex items-center gap-x-3">
+                      <GlobeAltIcon className="h-5 w-5 text-gray-400" />
+                      <span className="text-sm text-gray-600">{vet.languages.join(', ')}</span>
+                    </div>
+                  )}
+                  {vet.animals && vet.animals.length > 0 && (
+                    <div className="flex items-center gap-x-3">
+                      <AcademicCapIcon className="h-5 w-5 text-gray-400" />
+                      <span className="text-sm text-gray-600">{vet.animals.join(', ')}</span>
+                    </div>
+                  )}
+                  {vet.experience && (
+                    <div className="flex items-center gap-x-3">
+                      <IdentificationIcon className="h-5 w-5 text-gray-400" />
+                      <span className="text-sm text-gray-600">{vet.experience}</span>
+                    </div>
+                  )}
+                  {vet.staff && vet.staff.length > 0 && (
+                    <div className="flex items-center gap-x-3">
+                      <UsersIcon className="h-5 w-5 text-gray-400" />
+                      <span className="text-sm text-gray-600">{vet.staff.join(', ')}</span>
+                    </div>
+                  )}
+                  {vet.insurance && (
+                    <div className="flex items-center gap-x-3">
+                      <CurrencyDollarIcon className="h-5 w-5 text-gray-400" />
+                      <span className="text-sm text-gray-600">{vet.insurance}</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="mt-4">
