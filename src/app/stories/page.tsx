@@ -106,7 +106,11 @@ export default function StoriesPage() {
                   {stories[0].category}
                 </span>
                 <time dateTime={stories[0].date} className="text-sm text-gray-500">
-                  {new Date(stories[0].date).toLocaleDateString()}
+                  {new Date(stories[0].date).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
                 </time>
                 <span className="inline-flex items-center rounded-full bg-indigo-600 px-2 py-1 text-xs font-medium text-white ml-auto">
                   Featured
@@ -139,7 +143,11 @@ export default function StoriesPage() {
                 <div className="flex items-center gap-x-3 text-xs mb-2">
                   <CalendarIcon className="h-4 w-4 text-gray-400" />
                   <time dateTime={story.date} className="text-gray-500">
-                    {new Date(story.date).toLocaleDateString()}
+                    {new Date(story.date).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
                   </time>
                   <UserCircleIcon className="h-4 w-4 text-gray-400 ml-4" />
                   <span className="text-gray-600">{story.author}</span>

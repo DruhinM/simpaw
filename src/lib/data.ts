@@ -80,7 +80,7 @@ export function transformStoryData(story: any) {
     title: story[1] || '',
     author: story[2] || '',
     preview: story[3] || '',
-    date: story[4] || new Date().toISOString(),
+    date: story[4] ? new Date(story[4]).toISOString() : new Date().toISOString(),
     imageUrl: story[5] || DEFAULT_IMAGE_URL,
     category: story[6] || 'General',
     petType: story[7] || '',
