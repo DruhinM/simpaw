@@ -1,18 +1,51 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import { HeartIcon, UserGroupIcon, BuildingOffice2Icon, LightBulbIcon, ArrowTrendingUpIcon, ChatBubbleLeftRightIcon, UserIcon } from '@heroicons/react/24/outline';
+import { Spinner } from '@/components/Spinner';
+import { getPets, getDonations, getVets, getTips } from '@/lib/data';
 
 export default function Home() {
-  // Example stats (replace with dynamic values if available)
-  const stats = [
-    { name: 'Pets Helped', value: '2,500+', icon: HeartIcon, bg: 'bg-pink-50' },
-    { name: 'Active Donors', value: '1,000+', icon: UserGroupIcon, bg: 'bg-indigo-50' },
-    { name: 'Vets Listed', value: '120+', icon: BuildingOffice2Icon, bg: 'bg-green-50' },
-    { name: 'Tips Shared', value: '500+', icon: LightBulbIcon, bg: 'bg-yellow-50' },
-  ];
+  const [stats, setStats] = useState([
+    { name: 'Pets Helped', value: '—', icon: HeartIcon, bg: 'bg-pink-50' },
+    { name: 'Active Donors', value: '—', icon: UserGroupIcon, bg: 'bg-indigo-50' },
+    { name: 'Vets Listed', value: '—', icon: BuildingOffice2Icon, bg: 'bg-green-50' },
+    { name: 'Tips Shared', value: '—', icon: LightBulbIcon, bg: 'bg-yellow-50' },
+  ]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const [pets, donations, vets, tips] = await Promise.all([
+          getPets(),
+          getDonations(),
+          getVets(),
+          getTips(),
+        ]);
+        const uniqueDonors = Array.from(new Set(donations.map((d) => d.donor)));
+        setStats([
+          { name: 'Pets Helped', value: `${pets.length}+`, icon: HeartIcon, bg: 'bg-pink-50' },
+          { name: 'Active Donors', value: `${uniqueDonors.length}+`, icon: UserGroupIcon, bg: 'bg-indigo-50' },
+          { name: 'Vets Listed', value: `${vets.length}+`, icon: BuildingOffice2Icon, bg: 'bg-green-50' },
+          { name: 'Tips Shared', value: `${tips.length}+`, icon: LightBulbIcon, bg: 'bg-yellow-50' },
+        ]);
+      } catch (e) {
+        // fallback to dashes if error
+        setStats([
+          { name: 'Pets Helped', value: '—', icon: HeartIcon, bg: 'bg-pink-50' },
+          { name: 'Active Donors', value: '—', icon: UserGroupIcon, bg: 'bg-indigo-50' },
+          { name: 'Vets Listed', value: '—', icon: BuildingOffice2Icon, bg: 'bg-green-50' },
+          { name: 'Tips Shared', value: '—', icon: LightBulbIcon, bg: 'bg-yellow-50' },
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchStats();
+  }, []);
 
   // Add NGO partners data (should match donations page)
   const ngoPartners = [
@@ -82,15 +115,19 @@ export default function Home() {
           <h2 className="text-2xl font-bold tracking-tight text-indigo-600 sm:text-3xl mb-2">Our Impact</h2>
           <p className="text-lg text-gray-600">Together, we're making a difference for pets and their families.</p>
         </div>
-        <dl className="grid grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-4">
-          {stats.map((stat) => (
-            <div key={stat.name} className={`flex flex-col items-center ${stat.bg} rounded-xl shadow p-6 hover:shadow-lg transition-shadow`}>
-              <stat.icon className="h-10 w-10 text-indigo-600 mb-3" />
-              <dt className="text-base font-medium text-gray-600">{stat.name}</dt>
-              <dd className="text-3xl font-bold text-gray-900 mt-2">{stat.value}</dd>
-            </div>
-          ))}
-        </dl>
+        {loading ? (
+          <Spinner />
+        ) : (
+          <dl className="grid grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-4">
+            {stats.map((stat) => (
+              <div key={stat.name} className={`flex flex-col items-center ${stat.bg} rounded-xl shadow p-6 hover:shadow-lg transition-shadow`}>
+                <stat.icon className="h-10 w-10 text-indigo-600 mb-3" />
+                <dt className="text-base font-medium text-gray-600">{stat.name}</dt>
+                <dd className="text-3xl font-bold text-gray-900 mt-2">{stat.value}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
       </div>
 
       {/* How It Works Section */}
