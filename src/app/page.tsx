@@ -109,6 +109,19 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Additional Image Section */}
+      <div className="mx-auto max-w-4xl px-6 mb-16 flex flex-col items-center">
+        <Image
+          src="/happy-pets.jpg"
+          alt="Happy pets and their owners"
+          width={900}
+          height={500}
+          className="rounded-2xl shadow-lg object-cover w-full h-auto"
+          priority
+        />
+        <p className="mt-4 text-lg text-gray-700 text-center max-w-2xl">Celebrating the joy and companionship pets bring to our lives. Join our community and make a difference for animals everywhere!</p>
+      </div>
+
       {/* Features section */}
       <div className="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">

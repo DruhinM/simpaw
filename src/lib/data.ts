@@ -265,8 +265,8 @@ export const getPlaces = async (): Promise<Place[]> => {
 export const getDonations = async (): Promise<{ amount: number; date: string; donor: string }[]> => {
   const data = await fetchSheetData('Donations');
   return data.map((donation: SheetRow) => ({
-    amount: Number(donation[0]) || 0,
-    date: donation[1] || new Date().toISOString(),
-    donor: donation[2] || 'Anonymous'
+    amount: Number(donation[3]) || 0,
+    date: donation[6] || new Date().toISOString(),
+    donor: donation[1] || 'Anonymous'
   }));
 } 
