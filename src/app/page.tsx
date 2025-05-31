@@ -78,8 +78,8 @@ export default function Home() {
               Discover stories, connect with pet parents, find trusted vets, and explore pet-friendly places. Make a difference for pets across India with <span className="font-semibold text-orange-600">simpaw</span>.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
-              <Link href="#join" className="rounded-md bg-orange-500 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-orange-600 transition">Join the Community</Link>
-              <Link href="/donate" className="rounded-md border border-orange-500 px-6 py-3 text-base font-semibold text-orange-500 bg-white hover:bg-orange-50 transition">Support Us</Link>
+              <Link href="#join" className="rounded-md bg-[#F4A300] px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-[#007C91] transition">Join the Community</Link>
+              <Link href="https://simpaw.in/donate" className="rounded-md border border-orange-500 px-6 py-3 text-base font-semibold text-orange-500 bg-white hover:bg-orange-50 transition">Support Us</Link>
             </div>
             <div className="flex items-center gap-2">
               <Image src="/avatars.png" alt="Community avatar 1" width={40} height={40} className="rounded-full border-2 border-white -ml-2 first:ml-0" />
@@ -132,7 +132,7 @@ export default function Home() {
             <span className="font-bold text-indigo-600">Community-Driven & Free</span>
           </div>
           <p className="text-gray-700 mb-4">simpaw is 100% open source and community-driven. Contribute stories, help moderate, suggest places, and build tools for pet parents in India.</p>
-          <a href="https://github.com/simpaw" target="_blank" rel="noopener noreferrer" className="rounded-md border border-indigo-500 px-4 py-2 text-sm font-semibold text-indigo-500 hover:bg-indigo-50 w-max">Contribute on GitHub</a>
+          <Link href="https://simpaw.in/donate" className="rounded-md border border-[#007C91] px-4 py-2 text-sm font-semibold text-[#007C91] bg-white hover:bg-[#E6F7FA] w-max">Contribute</Link>
         </div>
       </section>
 
@@ -144,7 +144,7 @@ export default function Home() {
             <span className="font-bold text-orange-600">Make a Difference</span>
           </div>
           <p className="text-gray-700 mb-4">Support animal NGOs, community projects, and pet rescue operations. Every contribution counts for India's animals!</p>
-          <Link href="/donate" className="rounded-md bg-orange-500 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-orange-600 w-max">Donate Now</Link>
+          <Link href="https://simpaw.in/donate" className="rounded-md bg-orange-500 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-orange-600 w-max">Donate Now</Link>
         </div>
         <div className="bg-white rounded-xl p-8 shadow flex flex-col gap-3">
           <div className="flex items-center gap-2 mb-2">
@@ -152,7 +152,7 @@ export default function Home() {
             <span className="font-bold text-indigo-600">Contribute & Build</span>
           </div>
           <p className="text-gray-700 mb-4">Join the open-source movement. Help build features, moderate, write, or share your expertise to empower pet parents nationwide.</p>
-          <a href="https://github.com/simpaw" target="_blank" rel="noopener noreferrer" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-700 w-max">Start Contributing</a>
+          <a href="https://simpaw.in/donate" target="_blank" rel="noopener noreferrer" className="rounded-md bg-[#007C91] px-4 py-2 text-sm font-semibold text-white shadow hover:bg-[#F4A300] w-max">Start Contributing</a>
         </div>
       </section>
 
@@ -202,8 +202,8 @@ export default function Home() {
           <h2 className="text-2xl sm:text-3xl font-bold mb-4">Be a Part of India's Pet Revolution</h2>
           <p className="text-lg text-gray-700 mb-8">Whether you're a pet parent, animal lover, or want to make an impact — simpaw is your open home to share, learn, and help.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="#join" className="rounded-md bg-orange-500 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-orange-600 transition">Join Now</Link>
-            <a href="https://github.com/simpaw" target="_blank" rel="noopener noreferrer" className="rounded-md border border-orange-500 px-6 py-3 text-base font-semibold text-orange-500 bg-white hover:bg-orange-50 transition">Contribute</a>
+            <Link href="#join" className="rounded-md bg-[#F4A300] px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-[#007C91] transition">Join Now</Link>
+            <a href="https://github.com/DruhinM/simpaw" target="_blank" rel="noopener noreferrer" className="rounded-md border border-[#007C91] px-6 py-3 text-base font-semibold text-[#007C91] bg-white hover:bg-[#E6F7FA] w-max">Contribute</a>
           </div>
         </div>
       </section>

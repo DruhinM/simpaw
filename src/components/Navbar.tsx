@@ -20,7 +20,7 @@ export default function Navbar() {
       <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
         <div className="flex lg:flex-1">
           <Link href="/" className="-m-1.5 p-1.5">
-            <span className="text-2xl font-bold text-indigo-600">Simpaw</span>
+            <span className="text-2xl font-bold text-[#F4A300]">Simpaw</span>
           </Link>
         </div>
         <div className="flex lg:hidden">
@@ -47,7 +47,7 @@ export default function Navbar() {
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           <Link
             href="/donate"
-            className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
+            className="rounded-md bg-[#F4A300] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#007C91] border border-[#F4A300] hover:border-[#007C91]"
           >
             Support Us
           </Link>
@@ -58,7 +58,7 @@ export default function Navbar() {
         <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
           <div className="flex items-center justify-between">
             <Link href="/" className="-m-1.5 p-1.5">
-              <span className="text-2xl font-bold text-indigo-600">Simpaw</span>
+              <span className="text-2xl font-bold text-[#F4A300]">Simpaw</span>
             </Link>
             <button
               type="button"
@@ -86,7 +86,7 @@ export default function Navbar() {
               <div className="py-6">
                 <Link
                   href="/donate"
-                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-[#F4A300] hover:bg-[#FFF7E6]"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Support Us
