@@ -114,7 +114,7 @@ export default function StoriesPage() {
             </div>
             <div className="flex-1 p-8 flex flex-col justify-center">
               <div className="flex items-center gap-x-4 mb-2">
-                <span className="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-xs font-medium text-indigo-700">
+                <span className="inline-flex items-center rounded-full bg-[#FFF7E6] px-3 py-1 text-xs font-medium text-[#F4A300]">
                   {stories[0].category}
                 </span>
                 <time dateTime={stories[0].date} className="text-sm text-gray-500">
@@ -154,11 +154,11 @@ export default function StoriesPage() {
             >
               <div className="relative h-48 w-full">
                 <Image src={story.imageUrl} alt={story.title} fill className="object-cover" />
-                <span className="absolute top-4 left-4 inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-xs font-medium text-indigo-700 z-10">
+                <span className="absolute top-4 left-4 inline-flex items-center rounded-full bg-[#FFF7E6] px-3 py-1 text-xs font-medium text-[#F4A300] z-10">
                   {story.category}
                 </span>
                 {story.featured && (
-                  <span className="absolute top-4 right-4 bg-pink-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow z-10">Featured</span>
+                  <span className="absolute top-4 right-4 bg-[#F4A300] text-white text-xs font-bold px-3 py-1 rounded-full shadow z-10">Featured</span>
                 )}
               </div>
               <div className="flex-1 flex flex-col p-6">
@@ -179,7 +179,7 @@ export default function StoriesPage() {
                 <div className="flex items-center justify-between mt-auto">
                   <div className="flex gap-4">
                     <button 
-                      className="flex items-center gap-1 text-gray-500 hover:text-indigo-600 text-xs"
+                      className="flex items-center gap-1 text-gray-500 hover:text-[#007C91] text-xs"
                       onClick={(e) => {
                         e.stopPropagation();
                         // Handle like
@@ -189,7 +189,7 @@ export default function StoriesPage() {
                       <span>{story.likes || 0}</span>
                     </button>
                     <button 
-                      className="flex items-center gap-1 text-gray-500 hover:text-indigo-600 text-xs"
+                      className="flex items-center gap-1 text-gray-500 hover:text-[#007C91] text-xs"
                       onClick={(e) => {
                         e.stopPropagation();
                         // Handle comment
@@ -201,7 +201,7 @@ export default function StoriesPage() {
                   </div>
                   <div className="flex gap-2">
                     <button 
-                      className="text-gray-500 hover:text-indigo-600"
+                      className="text-gray-500 hover:text-[#007C91]"
                       onClick={(e) => {
                         e.stopPropagation();
                         // Handle share
@@ -210,7 +210,7 @@ export default function StoriesPage() {
                       <ShareIcon className="h-4 w-4" />
                     </button>
                     <button 
-                      className="text-gray-500 hover:text-indigo-600"
+                      className="text-gray-500 hover:text-[#007C91]"
                       onClick={(e) => {
                         e.stopPropagation();
                         // Handle bookmark
@@ -234,15 +234,15 @@ export default function StoriesPage() {
         )}
 
         {/* Share Your Story CTA */}
-        <div className="mt-16 rounded-2xl bg-indigo-50 py-10 px-6 sm:py-16 sm:px-12">
+        <div className="mt-16 rounded-2xl bg-[#E6F7FA] py-10 px-6 sm:py-16 sm:px-12">
           <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-2xl font-bold tracking-tight text-indigo-900">Have a story to share?</h2>
-            <p className="mt-4 text-lg leading-6 text-indigo-700">
+            <h2 className="text-2xl font-bold tracking-tight text-[#007C91]">Have a story to share?</h2>
+            <p className="mt-4 text-lg leading-6 text-[#007C91]">
               Your journey could inspire other pet parents. Share your experience with our community.
             </p>
             <div className="mt-6">
               <button
-                className="rounded-md bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
+                className="rounded-md bg-[#007C91] px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#F4A300]"
                 onClick={() => setIsModalOpen(true)}
               >
                 Share Your Story

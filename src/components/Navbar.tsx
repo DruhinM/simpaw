@@ -38,7 +38,7 @@ export default function Navbar() {
             <Link
               key={item.name}
               href={item.href}
-              className="text-sm font-semibold leading-6 text-gray-900 hover:text-indigo-600"
+              className="text-sm font-semibold leading-6 text-gray-900 hover:text-[#007C91]"
             >
               {item.name}
             </Link>

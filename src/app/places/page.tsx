@@ -99,7 +99,7 @@ export default function PlacesPage() {
           <dl className="grid grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-3">
             {stats.map((stat) => (
               <div key={stat.name} className="flex flex-col items-center gap-y-4">
-                <stat.icon className="h-12 w-12 text-indigo-600" />
+                <stat.icon className="h-12 w-12 text-[#F4A300]" />
                 <dt className="text-base leading-7 text-gray-600">{stat.name}</dt>
                 <dd className="text-3xl font-semibold tracking-tight text-gray-900">{stat.value}</dd>
               </div>
@@ -119,8 +119,8 @@ export default function PlacesPage() {
                 }}
                 className={`rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap ${
                   category === selectedCategory
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                    ? 'bg-[#007C91] text-white'
+                    : 'bg-gray-100 text-gray-900 hover:bg-[#E6F7FA]'
                 }`}
               >
                 {category}
@@ -152,7 +152,7 @@ export default function PlacesPage() {
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900">{place.name}</h3>
-                    <span className="text-sm text-indigo-600">{place.type}</span>
+                    <span className="text-sm text-[#007C91]">{place.type}</span>
                   </div>
                   <div className="flex items-center gap-x-1">
                     <StarIcon className="h-5 w-5 text-yellow-400" />
@@ -212,7 +212,7 @@ export default function PlacesPage() {
                   <div className="text-sm text-gray-500">
                     Established {place.established}
                   </div>
-                  <button className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">
+                  <button className="rounded-md bg-[#F4A300] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#007C91]">
                     View Details
                   </button>
                 </div>
@@ -230,16 +230,16 @@ export default function PlacesPage() {
         )}
 
         {/* Add Place CTA */}
-        <div className="mt-16 rounded-2xl bg-indigo-50 py-10 px-6 sm:py-16 sm:px-12">
+        <div className="mt-16 rounded-2xl bg-[#E6F7FA] py-10 px-6 sm:py-16 sm:px-12">
           <div className="mx-auto max-w-2xl text-center">
-            <BuildingStorefrontIcon className="mx-auto h-12 w-12 text-indigo-600" />
-            <h2 className="mt-4 text-2xl font-bold tracking-tight text-indigo-900">Know a Pet-Friendly Place?</h2>
-            <p className="mt-4 text-lg leading-6 text-indigo-700">
+            <BuildingStorefrontIcon className="mx-auto h-12 w-12 text-[#007C91]" />
+            <h2 className="mt-4 text-2xl font-bold tracking-tight text-[#007C91]">Know a Pet-Friendly Place?</h2>
+            <p className="mt-4 text-lg leading-6 text-[#007C91]">
               Help other pet parents discover great places by adding your recommendations.
             </p>
             <div className="mt-6">
               <button
-                className="rounded-md bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
+                className="rounded-md bg-[#007C91] px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#F4A300]"
                 onClick={() => setIsModalOpen(true)}
               >
                 Add a Place

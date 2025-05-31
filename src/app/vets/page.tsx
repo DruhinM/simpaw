@@ -157,7 +157,7 @@ export default function VetsPage() {
                   <button
                     key={city}
                     onClick={() => { setSelectedCity(city); setCurrentPage(1); }}
-                    className={`rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap border transition-colors ${selectedCity === city ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-900 border-gray-200 hover:bg-indigo-50'}`}
+                    className={`rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap border transition-colors ${selectedCity === city ? 'bg-[#007C91] text-white border-[#007C91]' : 'bg-white text-gray-900 border-gray-200 hover:bg-[#E6F7FA]'}`}
                   >
                     {city}
                   </button>
@@ -171,7 +171,7 @@ export default function VetsPage() {
                   <button
                     key={specialty}
                     onClick={() => { setSelectedSpecialty(specialty); setCurrentPage(1); }}
-                    className={`rounded-full px-4 py-2 text-sm font-medium border transition-colors shadow-sm ${selectedSpecialty === specialty ? 'bg-pink-600 text-white border-pink-600' : 'bg-white text-gray-900 border-gray-200 hover:bg-pink-50'}`}
+                    className={`rounded-full px-4 py-2 text-sm font-medium border transition-colors shadow-sm ${selectedSpecialty === specialty ? 'bg-[#007C91] text-white border-[#007C91]' : 'bg-white text-gray-900 border-gray-200 hover:bg-[#E6F7FA]'}`}
                     style={{ minWidth: '120px', marginBottom: '8px' }}
                   >
                     {specialty}
@@ -193,7 +193,7 @@ export default function VetsPage() {
                   className="object-cover"
                 />
                 {vet.emergency && (
-                  <span className="absolute top-2 left-2 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow">Verified</span>
+                  <span className="absolute top-2 left-2 bg-[#F4A300] text-white text-xs font-bold px-3 py-1 rounded-full shadow">Verified</span>
                 )}
               </div>
               <div className="p-6">
@@ -279,7 +279,7 @@ export default function VetsPage() {
                 <div className="mt-6">
                   <a
                     href={`mailto:${vet.email}?subject=Appointment%20Request%20for%20${encodeURIComponent(vet.name)}`}
-                    className="w-full inline-block rounded-md bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 text-center"
+                    className="w-full inline-block rounded-md bg-[#F4A300] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#007C91] text-center"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
