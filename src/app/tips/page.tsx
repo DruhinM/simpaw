@@ -134,7 +134,7 @@ export default function TipsPage() {
             <dl className="grid grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-3">
               {stats.map((stat) => (
                 <div key={stat.name} className="flex flex-col items-center gap-y-4">
-                  <stat.icon className="h-12 w-12 text-indigo-600" />
+                  <stat.icon className="h-12 w-12 text-[#F4A300]" />
                   <dt className="text-base leading-7 text-gray-600">{stat.name}</dt>
                   <dd className="text-3xl font-semibold tracking-tight text-gray-900">{stat.value}</dd>
                 </div>
@@ -151,7 +151,7 @@ export default function TipsPage() {
               </p>
               <div className="mt-6">
                 <button
-                  className="rounded-md bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
+                  className="rounded-md bg-[#F4A300] px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#007C91]"
                   onClick={() => setIsModalOpen(true)}
                 >
                   Submit Your Tip
@@ -180,7 +180,7 @@ export default function TipsPage() {
                   <input className="w-full border rounded px-3 py-2" placeholder="Image URL (optional)" value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))} />
                   <div className="flex justify-end gap-2">
                     <button type="button" className="px-4 py-2 rounded bg-gray-200" onClick={() => setIsModalOpen(false)}>Cancel</button>
-                    <button type="submit" className="px-4 py-2 rounded bg-indigo-600 text-white">Send</button>
+                    <button type="submit" className="px-4 py-2 rounded bg-[#F4A300] text-white hover:bg-[#007C91]">Send</button>
                   </div>
                 </form>
               </div>
