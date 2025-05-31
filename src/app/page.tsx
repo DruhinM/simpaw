@@ -68,8 +68,8 @@ export default function Home() {
         <div className="mx-auto max-w-7xl flex flex-col lg:flex-row items-center justify-between gap-8 px-6">
           <div className="max-w-xl">
             <div className="flex items-center gap-2 mb-4">
-              <span className="text-orange-600 font-bold text-lg">simpaw</span>
-              <span className="bg-orange-100 text-orange-600 text-xs font-semibold px-2 py-1 rounded">Open Source</span>
+              <span className="text-[#F4A300] font-bold text-lg">simpaw</span>
+              <span className="bg-[#F4A300] text-white text-xs font-semibold px-2 py-1 rounded">Open Source</span>
             </div>
             <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 leading-tight">
               India's Open Source Pet Community
@@ -79,12 +79,12 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
               <Link href="#join" className="rounded-md bg-[#F4A300] px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-[#007C91] transition">Join the Community</Link>
-              <Link href="https://simpaw.in/donate" className="rounded-md border border-orange-500 px-6 py-3 text-base font-semibold text-orange-500 bg-white hover:bg-orange-50 transition">Support Us</Link>
+              <Link href="https://simpaw.in/donate" className="rounded-md border border-[#F4A300] px-6 py-3 text-base font-semibold text-[#F4A300] bg-white hover:bg-[#FFF7E6] transition">Support Us</Link>
             </div>
             <div className="flex items-center gap-2">
-              <Image src="/avatars.png" alt="Community avatar 1" width={40} height={40} className="rounded-full border-2 border-white -ml-2 first:ml-0" />
-              <Image src="/avatars2.png" alt="Community avatar 2" width={40} height={40} className="rounded-full border-2 border-white -ml-2" />
-              <Image src="/avatars3.png" alt="Community avatar 3" width={40} height={40} className="rounded-full border-2 border-white -ml-2" />
+              <Image src="/avatar1.png" alt="Community avatar 1" width={40} height={40} className="rounded-full border-2 border-white -ml-2 first:ml-0" />
+              <Image src="/avatar2.png" alt="Community avatar 2" width={40} height={40} className="rounded-full border-2 border-white -ml-2" />
+              <Image src="/avatar3.png" alt="Community avatar 3" width={40} height={40} className="rounded-full border-2 border-white -ml-2" />
               <span className="ml-2 text-gray-700 font-medium">+2,000 pet parents joined</span>
             </div>
           </div>
@@ -106,13 +106,13 @@ export default function Home() {
           <LightBulbIcon className="h-8 w-8 text-indigo-500 mb-3" />
           <h3 className="font-bold text-lg mb-2">Tips & Tricks</h3>
           <p className="text-gray-600 mb-4">Get expert advice and community crowd wisdom for daily pet care and happiness.</p>
-          <Link href="/tips" className="text-indigo-600 font-semibold hover:underline">See Tips</Link>
+          <Link href="/tips" className="text-[#007C91] font-semibold hover:underline">See Tips</Link>
         </div>
         <div className="bg-green-50 rounded-xl p-8 flex flex-col items-center text-center shadow">
           <BuildingStorefrontIcon className="h-8 w-8 text-green-500 mb-3" />
           <h3 className="font-bold text-lg mb-2">Vet Directory</h3>
           <p className="text-gray-600 mb-4">Find trusted vets near you, read reviews, and connect with animal experts.</p>
-          <Link href="/vets" className="text-green-600 font-semibold hover:underline">Find Vets</Link>
+          <Link href="/vets" className="text-[#007C91] font-semibold hover:underline">Find Vets</Link>
         </div>
       </section>
 
@@ -120,19 +120,19 @@ export default function Home() {
       <section className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="bg-white rounded-xl p-8 shadow flex flex-col gap-3">
           <div className="flex items-center gap-2 mb-2">
-            <MapPinIcon className="h-6 w-6 text-orange-500" />
-            <span className="font-bold text-orange-600">Pet-Friendly Places</span>
+            <MapPinIcon className="h-6 w-6 text-[#F4A300]" />
+            <span className="font-bold text-[#F4A300]">Pet-Friendly Places</span>
           </div>
           <p className="text-gray-700 mb-4">Discover restaurants, parks, travel spots, cafes and more that welcome your furry friends. Browse, rate, and add your own recommendations!</p>
-          <Link href="/places" className="rounded-md bg-orange-500 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-orange-600 w-max">Browse Places</Link>
+          <Link href="/places" className="rounded-md bg-[#F4A300] px-4 py-2 text-sm font-semibold text-white shadow hover:bg-[#007C91] w-max">Browse Places</Link>
         </div>
         <div className="bg-white rounded-xl p-8 shadow flex flex-col gap-3">
           <div className="flex items-center gap-2 mb-2">
-            <UsersIcon className="h-6 w-6 text-indigo-500" />
-            <span className="font-bold text-indigo-600">Community-Driven & Free</span>
+            <BuildingOffice2Icon className="h-6 w-6 text-[#007C91]" />
+            <span className="font-bold text-[#007C91]">Vets Around You</span>
           </div>
-          <p className="text-gray-700 mb-4">simpaw is 100% open source and community-driven. Contribute stories, help moderate, suggest places, and build tools for pet parents in India.</p>
-          <Link href="https://simpaw.in/donate" className="rounded-md border border-[#007C91] px-4 py-2 text-sm font-semibold text-[#007C91] bg-white hover:bg-[#E6F7FA] w-max">Contribute</Link>
+          <p className="text-gray-700 mb-4">Find trusted vets near you, read reviews, and connect with animal experts.</p>
+          <Link href="/vets" className="rounded-md bg-[#007C91] px-4 py-2 text-sm font-semibold text-white shadow hover:bg-[#F4A300] w-max">Find Vets</Link>
         </div>
       </section>
 
@@ -152,7 +152,7 @@ export default function Home() {
             <span className="font-bold text-indigo-600">Contribute & Build</span>
           </div>
           <p className="text-gray-700 mb-4">Join the open-source movement. Help build features, moderate, write, or share your expertise to empower pet parents nationwide.</p>
-          <a href="https://simpaw.in/donate" target="_blank" rel="noopener noreferrer" className="rounded-md bg-[#007C91] px-4 py-2 text-sm font-semibold text-white shadow hover:bg-[#F4A300] w-max">Start Contributing</a>
+          <a href="https://github.com/DruhinM/simpaw" target="_blank" rel="noopener noreferrer" className="rounded-md bg-[#007C91] px-4 py-2 text-sm font-semibold text-white shadow hover:bg-[#F4A300] w-max">Start Contributing</a>
         </div>
       </section>
 
@@ -203,7 +203,7 @@ export default function Home() {
           <p className="text-lg text-gray-700 mb-8">Whether you're a pet parent, animal lover, or want to make an impact — simpaw is your open home to share, learn, and help.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="#join" className="rounded-md bg-[#F4A300] px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-[#007C91] transition">Join Now</Link>
-            <a href="https://github.com/DruhinM/simpaw" target="_blank" rel="noopener noreferrer" className="rounded-md border border-[#007C91] px-6 py-3 text-base font-semibold text-[#007C91] bg-white hover:bg-[#E6F7FA] w-max">Contribute</a>
+            <a href="https://github.com/DruhinM/simpaw" target="_blank" rel="noopener noreferrer" className="rounded-md bg-[#007C91] px-6 py-3 text-base font-semibold text-white shadow hover:bg-[#F4A300] w-max">Contribute</a>
           </div>
         </div>
       </section>
