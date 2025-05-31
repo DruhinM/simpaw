@@ -268,7 +268,7 @@ export default function VetsPage() {
                     {vet.services.map((service, i) => (
                       <span
                         key={i}
-                        className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700"
+                        className="inline-flex items-center rounded-md bg-[#E6F7FA] px-2 py-1 text-xs font-medium text-[#007C91]"
                       >
                         {service}
                       </span>
@@ -302,13 +302,13 @@ export default function VetsPage() {
         {/* Emergency Services CTA */}
         <div className="mt-16 rounded-2xl bg-red-50 py-10 px-6 sm:py-16 sm:px-12">
           <div className="mx-auto max-w-2xl text-center">
-            <ShieldCheckIcon className="mx-auto h-12 w-12 text-red-600" />
-            <h2 className="mt-4 text-2xl font-bold tracking-tight text-red-900">24/7 Emergency Services</h2>
-            <p className="mt-4 text-lg leading-6 text-red-700">
+            <ShieldCheckIcon className="mx-auto h-12 w-12 text-[#F4A300]" />
+            <h2 className="mt-4 text-2xl font-bold tracking-tight text-[#F4A300]">24/7 Emergency Services</h2>
+            <p className="mt-4 text-lg leading-6 text-[#007C91]">
               For urgent pet care needs, our emergency veterinary partners are available around the clock.
             </p>
             <div className="mt-6">
-              <button className="rounded-md bg-red-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-red-500">
+              <button className="rounded-md bg-[#F4A300] px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#007C91]">
                 Find Emergency Care
               </button>
             </div>
@@ -316,10 +316,10 @@ export default function VetsPage() {
         </div>
 
         {/* Request to Add a Vet Section */}
-        <div className="mt-16 rounded-2xl bg-indigo-50 py-10 px-6 sm:py-16 sm:px-12">
+        <div className="mt-16 rounded-2xl bg-[#E6F7FA] py-10 px-6 sm:py-16 sm:px-12">
           <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-2xl font-bold tracking-tight text-indigo-900">Know a great vet we missed?</h2>
-            <p className="mt-4 text-lg leading-6 text-indigo-700">
+            <h2 className="text-2xl font-bold tracking-tight text-[#007C91]">Know a great vet we missed?</h2>
+            <p className="mt-4 text-lg leading-6 text-[#007C91]">
               Help us keep our directory up to date by requesting to add a veterinary clinic.
             </p>
             <div className="mt-6">
